@@ -1,6 +1,6 @@
 school_name,city,country,region,teaching_language,estimated_monthly_cost_eur,housing_cost_eur,flight_cost_from_milan_eur,academic_score,career_score,lifestyle_score,international_environment_score,housing_difficulty_score,english_friendliness_score,visa_required_for_eu
 ESADE,Barcelona,Spain,Southern Europe,,,,,,,,,,,
-Nova SBE,Lisbon,Portugal,Southern Europe,,,,,,,,,,,
+Nova SBE,Lisbon,Portugal,Southern Europe,English,,,,5,4,5,5,3,5,FALSE
 HEC Paris,Jouy-en-Josas,France,Western Europe,,,,,,,,,,,
 Rotterdam School of Management,Rotterdam,Netherlands,Western Europe,,,,,,,,,,,
 University of St. Gallen,St. Gallen,Switzerland,Western Europe,,,,,,,,,,,
