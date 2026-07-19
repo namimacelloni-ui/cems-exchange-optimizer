@@ -20,14 +20,271 @@ st.set_page_config(
     page_title="CEMS Exchange Optimizer",
     page_icon="🌍",
     layout="wide",
+    initial_sidebar_state="expanded",
 )
 
 
-st.title("CEMS Exchange Destination Optimizer")
+# ---------------------------------------------------------
+# Custom CEMS-inspired styling
+# ---------------------------------------------------------
 
-st.write(
-    "Compare CEMS exchange destinations according to your academic, "
-    "career, financial, lifestyle and practical preferences."
+st.markdown(
+    """
+    <style>
+        :root {
+            --cems-navy: #002B49;
+            --cems-red: #E2231A;
+            --background: #F4F6F8;
+            --white: #FFFFFF;
+            --text: #17212B;
+            --muted: #5B6573;
+            --border: #DCE2E8;
+        }
+
+        .stApp {
+            background-color: var(--background);
+            color: var(--text);
+        }
+
+        .block-container {
+            max-width: 1280px;
+            padding-top: 2rem;
+            padding-bottom: 4rem;
+        }
+
+        [data-testid="stSidebar"] {
+            background-color: var(--cems-navy);
+        }
+
+        [data-testid="stSidebar"] * {
+            color: var(--white);
+        }
+
+        [data-testid="stSidebar"] hr {
+            border-color: rgba(255, 255, 255, 0.18);
+        }
+
+        [data-testid="stSidebar"] .stSlider label,
+        [data-testid="stSidebar"] .stMultiSelect label,
+        [data-testid="stSidebar"] .stCheckbox label {
+            font-weight: 600;
+        }
+
+        [data-testid="stSidebar"] [data-baseweb="tag"] {
+            background-color: var(--cems-red);
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--cems-navy);
+            letter-spacing: -0.02em;
+        }
+
+        .hero {
+            background:
+                linear-gradient(
+                    120deg,
+                    rgba(0, 43, 73, 0.98),
+                    rgba(0, 43, 73, 0.88)
+                );
+            border-radius: 18px;
+            padding: 2.4rem 2.6rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 12px 30px rgba(0, 43, 73, 0.16);
+        }
+
+        .hero-label {
+            color: #FFFFFF;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin-bottom: 0.7rem;
+        }
+
+        .hero-title {
+            color: #FFFFFF;
+            font-size: 2.65rem;
+            line-height: 1.08;
+            font-weight: 750;
+            margin: 0;
+        }
+
+        .hero-subtitle {
+            color: rgba(255, 255, 255, 0.82);
+            font-size: 1.05rem;
+            line-height: 1.6;
+            max-width: 760px;
+            margin-top: 1rem;
+            margin-bottom: 0;
+        }
+
+        .red-line {
+            width: 64px;
+            height: 5px;
+            background-color: var(--cems-red);
+            border-radius: 20px;
+            margin-top: 1.4rem;
+        }
+
+        .section-label {
+            color: var(--cems-red);
+            font-size: 0.78rem;
+            font-weight: 750;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+        }
+
+        .card {
+            background-color: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.35rem 1.45rem;
+            box-shadow: 0 5px 18px rgba(21, 35, 49, 0.05);
+            height: 100%;
+        }
+
+        .recommendation-card {
+            background-color: var(--white);
+            border: 1px solid var(--border);
+            border-left: 6px solid var(--cems-red);
+            border-radius: 14px;
+            padding: 1.55rem 1.65rem;
+            box-shadow: 0 7px 22px rgba(21, 35, 49, 0.07);
+            margin-top: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .recommendation-label {
+            color: var(--cems-red);
+            font-size: 0.78rem;
+            font-weight: 750;
+            letter-spacing: 0.11em;
+            text-transform: uppercase;
+        }
+
+        .recommendation-school {
+            color: var(--cems-navy);
+            font-size: 1.75rem;
+            font-weight: 750;
+            margin-top: 0.25rem;
+        }
+
+        .recommendation-location {
+            color: var(--muted);
+            font-size: 0.98rem;
+            margin-top: 0.15rem;
+        }
+
+        .recommendation-score {
+            color: var(--cems-navy);
+            font-size: 2.2rem;
+            font-weight: 800;
+            text-align: right;
+        }
+
+        .recommendation-score-label {
+            color: var(--muted);
+            font-size: 0.82rem;
+            text-align: right;
+        }
+
+        .strength {
+            background-color: #F1F7F4;
+            border-radius: 9px;
+            padding: 0.7rem 0.8rem;
+            margin-bottom: 0.55rem;
+            color: #204B36;
+        }
+
+        .drawback {
+            background-color: #FFF4F2;
+            border-radius: 9px;
+            padding: 0.7rem 0.8rem;
+            margin-bottom: 0.55rem;
+            color: #7A2A24;
+        }
+
+        .progress-box {
+            background-color: #EAF0F4;
+            border-left: 4px solid var(--cems-navy);
+            border-radius: 9px;
+            padding: 0.85rem 1rem;
+            margin-bottom: 1.3rem;
+            color: var(--cems-navy);
+        }
+
+        .disclaimer {
+            background-color: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 0.9rem 1rem;
+            color: var(--muted);
+            font-size: 0.84rem;
+            margin-top: 2rem;
+        }
+
+        div[data-testid="stDataFrame"] {
+            background-color: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        div[data-testid="stAlert"] {
+            border-radius: 10px;
+        }
+
+        .stButton > button {
+            background-color: var(--cems-red);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-weight: 650;
+        }
+
+        .stButton > button:hover {
+            background-color: #BE1D16;
+            color: var(--white);
+        }
+
+        @media (max-width: 800px) {
+            .hero {
+                padding: 1.7rem 1.4rem;
+            }
+
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .recommendation-score,
+            .recommendation-score-label {
+                text-align: left;
+            }
+        }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+
+# ---------------------------------------------------------
+# Hero section
+# ---------------------------------------------------------
+
+st.markdown(
+    """
+    <div class="hero">
+        <div class="hero-label">Global exchange decision tool</div>
+        <div class="hero-title">Find the CEMS destination that fits you.</div>
+        <p class="hero-subtitle">
+            Compare international exchange opportunities using your academic,
+            career, financial and lifestyle priorities.
+        </p>
+        <div class="red-line"></div>
+    </div>
+    """,
+    unsafe_allow_html=True,
 )
 
 
@@ -39,17 +296,28 @@ complete_school_count = (
     .sum()
 )
 
-st.info(
-    f"Dataset progress: {complete_school_count} of "
-    f"{len(universities)} universities currently contain research data."
+st.markdown(
+    f"""
+    <div class="progress-box">
+        <strong>Prototype dataset:</strong>
+        {complete_school_count} of {len(universities)} destinations currently
+        contain research data.
+    </div>
+    """,
+    unsafe_allow_html=True,
 )
 
 
-# -------------------------
-# Practical filters
-# -------------------------
+# ---------------------------------------------------------
+# Sidebar
+# ---------------------------------------------------------
 
-st.sidebar.header("Practical constraints")
+st.sidebar.markdown("## Exchange preferences")
+st.sidebar.caption(
+    "Set your practical constraints and decide what matters most to you."
+)
+
+st.sidebar.markdown("### Practical constraints")
 
 available_regions = sorted(
     universities["region"].dropna().unique().tolist()
@@ -80,7 +348,7 @@ maximum_budget = st.sidebar.slider(
 )
 
 visa_free_only = st.sidebar.checkbox(
-    "Show only destinations without a student visa for EU citizens",
+    "Only destinations without a student visa for EU citizens",
     value=False,
 )
 
@@ -106,12 +374,9 @@ if visa_free_only:
 normalized_data = add_normalized_scores(filtered_universities)
 
 
-# -------------------------
-# Priority weights
-# -------------------------
-
 st.sidebar.divider()
-st.sidebar.header("Your priorities")
+st.sidebar.markdown("### Your priorities")
+st.sidebar.caption("The six weights must add up to 100%.")
 
 academic_weight = st.sidebar.slider(
     "Academic opportunities",
@@ -165,13 +430,19 @@ total_weight = (
     + housing_weight
 )
 
-st.sidebar.write(f"Total weight: {total_weight}%")
+if total_weight == 100:
+    st.sidebar.success("Priority total: 100%")
+else:
+    st.sidebar.error(f"Priority total: {total_weight}%")
 
+
+# ---------------------------------------------------------
+# Results
+# ---------------------------------------------------------
 
 if total_weight != 100:
     st.warning(
-        "The priority weights must add up to 100% before the ranking "
-        "can be calculated."
+        "Adjust the priority sliders so that the total equals 100%."
     )
 
 else:
@@ -179,7 +450,8 @@ else:
         "academic_score_normalized": academic_weight / 100,
         "career_score_normalized": career_weight / 100,
         "lifestyle_score_normalized": lifestyle_weight / 100,
-        "international_environment_score_normalized": international_weight / 100,
+        "international_environment_score_normalized":
+            international_weight / 100,
         "english_friendliness_score_normalized": english_weight / 100,
         "housing_difficulty_score_normalized": housing_weight / 100,
     }
@@ -193,23 +465,41 @@ else:
         subset=["final_score"]
     )
 
-    st.subheader("Current ranking")
-
-    st.caption(
-        "Only universities matching the selected constraints and containing "
-        "complete scoring data are shown."
+    st.markdown(
+        '<div class="section-label">Personalised results</div>',
+        unsafe_allow_html=True,
     )
+    st.subheader("Your destination ranking")
 
     if available_results.empty:
         st.info(
-            "No universities match your current filters. Try increasing "
-            "your budget or selecting additional regions."
+            "No destinations match your current filters. Increase your "
+            "budget or select additional regions."
         )
 
     else:
-        st.write(
-            f"Showing {len(available_results)} eligible destination(s)."
-        )
+        metric_col1, metric_col2, metric_col3 = st.columns(3)
+
+        with metric_col1:
+            st.metric(
+                "Eligible destinations",
+                len(available_results),
+            )
+
+        with metric_col2:
+            st.metric(
+                "Maximum monthly budget",
+                f"€{maximum_budget:,}",
+            )
+
+        with metric_col3:
+            best_score = available_results.iloc[0]["final_score"]
+            st.metric(
+                "Highest match score",
+                f"{best_score:.1f}/100",
+            )
+
+        st.write("")
 
         display_data = available_results[
             [
@@ -239,7 +529,7 @@ else:
                 "country": "Country",
                 "region": "Region",
                 "estimated_monthly_cost_eur": "Monthly cost (€)",
-                "final_score": "Final score",
+                "final_score": "Match score",
                 "academic_score": "Academic",
                 "career_score": "Career",
                 "lifestyle_score": "Lifestyle",
@@ -253,49 +543,95 @@ else:
             display_data,
             use_container_width=True,
             hide_index=True,
+            column_config={
+                "Monthly cost (€)": st.column_config.NumberColumn(
+                    format="€%d"
+                ),
+                "Match score": st.column_config.ProgressColumn(
+                    min_value=0,
+                    max_value=100,
+                    format="%.1f",
+                ),
+            },
         )
 
-        st.subheader("Top recommendation")
+        st.write("")
+        st.markdown(
+            '<div class="section-label">Best match</div>',
+            unsafe_allow_html=True,
+        )
 
         top_school = available_results.iloc[0]
         explanation = generate_recommendation_explanation(top_school)
 
-        st.metric(
-            label=top_school["school_name"],
-            value=f"{top_school['final_score']:.2f}/100",
+        st.markdown(
+            f"""
+            <div class="recommendation-card">
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    gap:2rem;
+                    align-items:center;
+                    flex-wrap:wrap;
+                ">
+                    <div>
+                        <div class="recommendation-label">
+                            Top recommendation
+                        </div>
+                        <div class="recommendation-school">
+                            {top_school["school_name"]}
+                        </div>
+                        <div class="recommendation-location">
+                            {top_school["city"]}, {top_school["country"]}
+                            &nbsp;·&nbsp;
+                            Estimated monthly cost:
+                            €{top_school["estimated_monthly_cost_eur"]:.0f}
+                        </div>
+                    </div>
+                    <div>
+                        <div class="recommendation-score">
+                            {top_school["final_score"]:.1f}
+                        </div>
+                        <div class="recommendation-score-label">
+                            compatibility score
+                        </div>
+                    </div>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
         )
 
-        st.write(
-            f"{top_school['school_name']} in "
-            f"{top_school['city']}, {top_school['country']} currently "
-            "has the highest compatibility score based on your filters "
-            "and selected priorities."
-        )
+        strength_column, drawback_column = st.columns(2)
 
-        st.write(
-            f"Estimated monthly student cost: "
-            f"€{top_school['estimated_monthly_cost_eur']:.0f}"
-        )
-
-        col1, col2 = st.columns(2)
-
-        with col1:
-            st.markdown("#### Main strengths")
+        with strength_column:
+            st.markdown("#### Why it matches")
 
             for strength in explanation["strengths"]:
-                st.write(f"✓ {strength}")
+                st.markdown(
+                    f'<div class="strength">✓ {strength}</div>',
+                    unsafe_allow_html=True,
+                )
 
-        with col2:
-            st.markdown("#### Potential drawbacks")
+        with drawback_column:
+            st.markdown("#### Points to consider")
 
             for drawback in explanation["drawbacks"]:
-                st.write(f"– {drawback}")
+                st.markdown(
+                    f'<div class="drawback">– {drawback}</div>',
+                    unsafe_allow_html=True,
+                )
 
 
-st.divider()
-
-st.caption(
-    "This prototype uses constructed scores and approximate cost estimates. "
-    "It is intended as a transparent decision-support tool rather "
-    "than an objective university ranking."
+st.markdown(
+    """
+    <div class="disclaimer">
+        <strong>Independent student project.</strong>
+        This prototype is not an official CEMS platform. Scores are constructed
+        indicators and cost figures are approximate. The tool is intended to
+        support comparison, not replace official university information or
+        personal judgement.
+    </div>
+    """,
+    unsafe_allow_html=True,
 )
