@@ -31,7 +31,16 @@ st.write(
 
 
 universities = load_university_data()
+complete_school_count = (
+    universities["data_status"]
+    .isin(["partial", "complete"])
+    .sum()
+)
 
+st.info(
+    f"Dataset progress: {complete_school_count} of "
+    f"{len(universities)} universities currently contain research data."
+)
 
 # -------------------------
 # Practical filters
