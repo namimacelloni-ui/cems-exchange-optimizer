@@ -32,15 +32,15 @@ st.markdown(
     """
     <style>
         :root {
-            --primary: #183C34;
-            --accent: #C59A4A;
-            --background: #F5F1E8;
-            --card: #FFFDF8;
-            --text: #1F2A26;
-            --muted: #6F756F;
-            --border: #DED8CC;
-            --soft-green: #E8F0EC;
-            --soft-warm: #F5EAE2;
+            --primary: #111111;
+            --accent: #9E1B32;
+            --background: #F7F6F3;
+            --card: #FFFFFF;
+            --text: #202124;
+            --muted: #6B6F76;
+            --border: #E2E0DC;
+            --soft-accent: #F6EDEF;
+            --soft-neutral: #F1F0ED;
         }
 
         .stApp {
@@ -49,21 +49,29 @@ st.markdown(
         }
 
         .block-container {
-            max-width: 1280px;
+            max-width: 1240px;
             padding-top: 2rem;
             padding-bottom: 4rem;
         }
 
+        /* Sidebar */
+
         [data-testid="stSidebar"] {
             background-color: var(--primary);
+            border-right: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        [data-testid="stSidebar"] * {
+        [data-testid="stSidebar"] h1,
+        [data-testid="stSidebar"] h2,
+        [data-testid="stSidebar"] h3,
+        [data-testid="stSidebar"] p,
+        [data-testid="stSidebar"] label,
+        [data-testid="stSidebar"] span {
             color: #FFFFFF;
         }
 
         [data-testid="stSidebar"] hr {
-            border-color: rgba(255, 255, 255, 0.18);
+            border-color: rgba(255, 255, 255, 0.16);
         }
 
         [data-testid="stSidebar"] .stSlider label,
@@ -74,180 +82,262 @@ st.markdown(
 
         [data-testid="stSidebar"] [data-baseweb="tag"] {
             background-color: var(--accent);
+            border-radius: 5px;
         }
+
+        /* Typography */
 
         h1, h2, h3, h4 {
             color: var(--primary);
-            letter-spacing: -0.02em;
+            letter-spacing: -0.025em;
         }
 
+        /* Hero */
+
         .hero {
+            position: relative;
+            overflow: hidden;
             background:
                 linear-gradient(
-                    120deg,
-                    rgba(24, 60, 52, 0.98),
-                    rgba(44, 82, 70, 0.92)
+                    125deg,
+                    #111111 0%,
+                    #1C1C1C 58%,
+                    #4B111C 100%
                 );
-            border-radius: 18px;
-            padding: 2.4rem 2.6rem;
+            border-radius: 4px;
+            padding: 3rem 3.1rem;
             margin-bottom: 1.5rem;
-            box-shadow: 0 12px 30px rgba(24, 60, 52, 0.15);
+            box-shadow: 0 16px 38px rgba(17, 17, 17, 0.16);
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            top: -90px;
+            right: -70px;
+            width: 280px;
+            height: 280px;
+            border: 52px solid rgba(158, 27, 50, 0.55);
+            border-radius: 50%;
         }
 
         .hero-label {
-            color: #F0D9A7;
-            font-size: 0.78rem;
-            font-weight: 700;
-            letter-spacing: 0.14em;
+            position: relative;
+            z-index: 1;
+            color: #E6A7B2;
+            font-size: 0.75rem;
+            font-weight: 750;
+            letter-spacing: 0.15em;
             text-transform: uppercase;
-            margin-bottom: 0.7rem;
+            margin-bottom: 0.75rem;
         }
 
         .hero-title {
+            position: relative;
+            z-index: 1;
+            max-width: 820px;
             color: #FFFFFF;
-            font-size: 2.65rem;
+            font-size: 2.75rem;
             line-height: 1.08;
-            font-weight: 750;
+            font-weight: 760;
             margin: 0;
         }
 
         .hero-subtitle {
-            color: rgba(255, 255, 255, 0.82);
-            font-size: 1.05rem;
-            line-height: 1.6;
-            max-width: 760px;
+            position: relative;
+            z-index: 1;
+            max-width: 720px;
+            color: rgba(255, 255, 255, 0.76);
+            font-size: 1.04rem;
+            line-height: 1.65;
             margin-top: 1rem;
             margin-bottom: 0;
         }
 
         .accent-line {
-            width: 64px;
-            height: 5px;
+            position: relative;
+            z-index: 1;
+            width: 72px;
+            height: 4px;
+            margin-top: 1.5rem;
             background-color: var(--accent);
-            border-radius: 20px;
-            margin-top: 1.4rem;
         }
+
+        /* Section headings */
 
         .section-label {
             color: var(--accent);
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             font-weight: 750;
-            letter-spacing: 0.12em;
+            letter-spacing: 0.14em;
             text-transform: uppercase;
             margin-bottom: 0.25rem;
         }
 
+        /* Dataset message */
+
         .progress-box {
-            background-color: #EEE8DC;
-            border-left: 4px solid var(--primary);
-            border-radius: 9px;
-            padding: 0.85rem 1rem;
-            margin-bottom: 1.3rem;
-            color: var(--primary);
+            background-color: var(--card);
+            border: 1px solid var(--border);
+            border-left: 5px solid var(--accent);
+            border-radius: 4px;
+            padding: 0.95rem 1.1rem;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+            box-shadow: 0 4px 14px rgba(17, 17, 17, 0.04);
         }
+
+        /* Metric cards */
+
+        [data-testid="stMetric"] {
+            background-color: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 1.05rem 1.15rem;
+            box-shadow: 0 4px 14px rgba(17, 17, 17, 0.04);
+        }
+
+        [data-testid="stMetricValue"] {
+            color: var(--primary);
+            font-weight: 750;
+        }
+
+        [data-testid="stMetricLabel"] {
+            color: var(--muted);
+        }
+
+        /* Ranking table */
+
+        div[data-testid="stDataFrame"] {
+            background-color: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 6px 20px rgba(17, 17, 17, 0.05);
+        }
+
+        /* Recommendation */
 
         .recommendation-card {
             background-color: var(--card);
             border: 1px solid var(--border);
-            border-left: 6px solid var(--accent);
-            border-radius: 14px;
-            padding: 1.55rem 1.65rem;
-            box-shadow: 0 7px 22px rgba(31, 42, 38, 0.07);
+            border-top: 6px solid var(--accent);
+            border-radius: 4px;
+            padding: 1.7rem 1.8rem;
             margin-top: 0.8rem;
-            margin-bottom: 1rem;
+            margin-bottom: 1.2rem;
+            box-shadow: 0 8px 26px rgba(17, 17, 17, 0.07);
         }
 
         .recommendation-label {
             color: var(--accent);
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             font-weight: 750;
-            letter-spacing: 0.11em;
+            letter-spacing: 0.13em;
             text-transform: uppercase;
         }
 
         .recommendation-school {
             color: var(--primary);
-            font-size: 1.75rem;
-            font-weight: 750;
-            margin-top: 0.25rem;
+            font-size: 1.85rem;
+            line-height: 1.25;
+            font-weight: 760;
+            margin-top: 0.3rem;
         }
 
         .recommendation-location {
             color: var(--muted);
-            font-size: 0.98rem;
-            margin-top: 0.15rem;
+            font-size: 0.96rem;
+            margin-top: 0.35rem;
         }
 
         .recommendation-score {
-            color: var(--primary);
-            font-size: 2.2rem;
+            color: var(--accent);
+            font-size: 2.35rem;
+            line-height: 1;
             font-weight: 800;
             text-align: right;
         }
 
         .recommendation-score-label {
             color: var(--muted);
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             text-align: right;
+            margin-top: 0.3rem;
         }
 
+        /* Strengths and drawbacks */
+
         .strength {
-            background-color: var(--soft-green);
-            border-radius: 9px;
-            padding: 0.7rem 0.8rem;
-            margin-bottom: 0.55rem;
-            color: #315E50;
+            background-color: var(--soft-neutral);
+            border-left: 4px solid #333333;
+            border-radius: 3px;
+            padding: 0.78rem 0.9rem;
+            margin-bottom: 0.6rem;
+            color: #303234;
         }
 
         .drawback {
-            background-color: var(--soft-warm);
-            border-radius: 9px;
-            padding: 0.7rem 0.8rem;
-            margin-bottom: 0.55rem;
-            color: #7A5140;
+            background-color: var(--soft-accent);
+            border-left: 4px solid var(--accent);
+            border-radius: 3px;
+            padding: 0.78rem 0.9rem;
+            margin-bottom: 0.6rem;
+            color: #671322;
+        }
+
+        /* Notices */
+
+        div[data-testid="stAlert"] {
+            border-radius: 4px;
         }
 
         .disclaimer {
             background-color: var(--card);
             border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 0.9rem 1rem;
+            border-radius: 4px;
+            padding: 1rem 1.1rem;
             color: var(--muted);
             font-size: 0.84rem;
-            margin-top: 2rem;
+            line-height: 1.55;
+            margin-top: 2.2rem;
         }
 
-        div[data-testid="stDataFrame"] {
-            background-color: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        div[data-testid="stAlert"] {
-            border-radius: 10px;
-        }
+        /* Buttons */
 
         .stButton > button {
             background-color: var(--accent);
             color: #FFFFFF;
-            border: none;
-            border-radius: 8px;
+            border: 1px solid var(--accent);
+            border-radius: 3px;
             font-weight: 650;
         }
 
         .stButton > button:hover {
-            background-color: #A67C34;
+            background-color: #7F1528;
+            border-color: #7F1528;
             color: #FFFFFF;
         }
 
+        /* Inputs */
+
+        div[data-baseweb="select"] > div {
+            border-radius: 3px;
+        }
+
+        /* Mobile */
+
         @media (max-width: 800px) {
             .hero {
-                padding: 1.7rem 1.4rem;
+                padding: 2rem 1.5rem;
             }
 
             .hero-title {
-                font-size: 2rem;
+                font-size: 2.05rem;
+            }
+
+            .hero::after {
+                opacity: 0.4;
             }
 
             .recommendation-score,
