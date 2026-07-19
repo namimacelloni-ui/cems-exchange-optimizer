@@ -25,20 +25,22 @@ st.set_page_config(
 
 
 # ---------------------------------------------------------
-# Custom CEMS-inspired styling
+# Custom styling
 # ---------------------------------------------------------
 
 st.markdown(
     """
     <style>
         :root {
-            --cems-navy: #002B49;
-            --cems-red: #E2231A;
-            --background: #F4F6F8;
-            --white: #FFFFFF;
-            --text: #17212B;
-            --muted: #5B6573;
-            --border: #DCE2E8;
+            --primary: #183C34;
+            --accent: #C59A4A;
+            --background: #F5F1E8;
+            --card: #FFFDF8;
+            --text: #1F2A26;
+            --muted: #6F756F;
+            --border: #DED8CC;
+            --soft-green: #E8F0EC;
+            --soft-warm: #F5EAE2;
         }
 
         .stApp {
@@ -53,11 +55,11 @@ st.markdown(
         }
 
         [data-testid="stSidebar"] {
-            background-color: var(--cems-navy);
+            background-color: var(--primary);
         }
 
         [data-testid="stSidebar"] * {
-            color: var(--white);
+            color: #FFFFFF;
         }
 
         [data-testid="stSidebar"] hr {
@@ -71,11 +73,11 @@ st.markdown(
         }
 
         [data-testid="stSidebar"] [data-baseweb="tag"] {
-            background-color: var(--cems-red);
+            background-color: var(--accent);
         }
 
         h1, h2, h3, h4 {
-            color: var(--cems-navy);
+            color: var(--primary);
             letter-spacing: -0.02em;
         }
 
@@ -83,17 +85,17 @@ st.markdown(
             background:
                 linear-gradient(
                     120deg,
-                    rgba(0, 43, 73, 0.98),
-                    rgba(0, 43, 73, 0.88)
+                    rgba(24, 60, 52, 0.98),
+                    rgba(44, 82, 70, 0.92)
                 );
             border-radius: 18px;
             padding: 2.4rem 2.6rem;
             margin-bottom: 1.5rem;
-            box-shadow: 0 12px 30px rgba(0, 43, 73, 0.16);
+            box-shadow: 0 12px 30px rgba(24, 60, 52, 0.15);
         }
 
         .hero-label {
-            color: #FFFFFF;
+            color: #F0D9A7;
             font-size: 0.78rem;
             font-weight: 700;
             letter-spacing: 0.14em;
@@ -118,16 +120,16 @@ st.markdown(
             margin-bottom: 0;
         }
 
-        .red-line {
+        .accent-line {
             width: 64px;
             height: 5px;
-            background-color: var(--cems-red);
+            background-color: var(--accent);
             border-radius: 20px;
             margin-top: 1.4rem;
         }
 
         .section-label {
-            color: var(--cems-red);
+            color: var(--accent);
             font-size: 0.78rem;
             font-weight: 750;
             letter-spacing: 0.12em;
@@ -135,28 +137,28 @@ st.markdown(
             margin-bottom: 0.25rem;
         }
 
-        .card {
-            background-color: var(--white);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 1.35rem 1.45rem;
-            box-shadow: 0 5px 18px rgba(21, 35, 49, 0.05);
-            height: 100%;
+        .progress-box {
+            background-color: #EEE8DC;
+            border-left: 4px solid var(--primary);
+            border-radius: 9px;
+            padding: 0.85rem 1rem;
+            margin-bottom: 1.3rem;
+            color: var(--primary);
         }
 
         .recommendation-card {
-            background-color: var(--white);
+            background-color: var(--card);
             border: 1px solid var(--border);
-            border-left: 6px solid var(--cems-red);
+            border-left: 6px solid var(--accent);
             border-radius: 14px;
             padding: 1.55rem 1.65rem;
-            box-shadow: 0 7px 22px rgba(21, 35, 49, 0.07);
+            box-shadow: 0 7px 22px rgba(31, 42, 38, 0.07);
             margin-top: 0.8rem;
             margin-bottom: 1rem;
         }
 
         .recommendation-label {
-            color: var(--cems-red);
+            color: var(--accent);
             font-size: 0.78rem;
             font-weight: 750;
             letter-spacing: 0.11em;
@@ -164,7 +166,7 @@ st.markdown(
         }
 
         .recommendation-school {
-            color: var(--cems-navy);
+            color: var(--primary);
             font-size: 1.75rem;
             font-weight: 750;
             margin-top: 0.25rem;
@@ -177,7 +179,7 @@ st.markdown(
         }
 
         .recommendation-score {
-            color: var(--cems-navy);
+            color: var(--primary);
             font-size: 2.2rem;
             font-weight: 800;
             text-align: right;
@@ -190,32 +192,23 @@ st.markdown(
         }
 
         .strength {
-            background-color: #F1F7F4;
+            background-color: var(--soft-green);
             border-radius: 9px;
             padding: 0.7rem 0.8rem;
             margin-bottom: 0.55rem;
-            color: #204B36;
+            color: #315E50;
         }
 
         .drawback {
-            background-color: #FFF4F2;
+            background-color: var(--soft-warm);
             border-radius: 9px;
             padding: 0.7rem 0.8rem;
             margin-bottom: 0.55rem;
-            color: #7A2A24;
-        }
-
-        .progress-box {
-            background-color: #EAF0F4;
-            border-left: 4px solid var(--cems-navy);
-            border-radius: 9px;
-            padding: 0.85rem 1rem;
-            margin-bottom: 1.3rem;
-            color: var(--cems-navy);
+            color: #7A5140;
         }
 
         .disclaimer {
-            background-color: var(--white);
+            background-color: var(--card);
             border: 1px solid var(--border);
             border-radius: 10px;
             padding: 0.9rem 1rem;
@@ -225,7 +218,7 @@ st.markdown(
         }
 
         div[data-testid="stDataFrame"] {
-            background-color: var(--white);
+            background-color: var(--card);
             border: 1px solid var(--border);
             border-radius: 12px;
             overflow: hidden;
@@ -236,16 +229,16 @@ st.markdown(
         }
 
         .stButton > button {
-            background-color: var(--cems-red);
-            color: var(--white);
+            background-color: var(--accent);
+            color: #FFFFFF;
             border: none;
             border-radius: 8px;
             font-weight: 650;
         }
 
         .stButton > button:hover {
-            background-color: #BE1D16;
-            color: var(--white);
+            background-color: #A67C34;
+            color: #FFFFFF;
         }
 
         @media (max-width: 800px) {
@@ -281,7 +274,7 @@ st.markdown(
             Compare international exchange opportunities using your academic,
             career, financial and lifestyle priorities.
         </p>
-        <div class="red-line"></div>
+        <div class="accent-line"></div>
     </div>
     """,
     unsafe_allow_html=True,
@@ -469,6 +462,7 @@ else:
         '<div class="section-label">Personalised results</div>',
         unsafe_allow_html=True,
     )
+
     st.subheader("Your destination ranking")
 
     if available_results.empty:
@@ -556,6 +550,7 @@ else:
         )
 
         st.write("")
+
         st.markdown(
             '<div class="section-label">Best match</div>',
             unsafe_allow_html=True,
