@@ -25,22 +25,23 @@ st.set_page_config(
 
 
 # ---------------------------------------------------------
-# Custom styling
+# Bocconi-inspired styling
 # ---------------------------------------------------------
 
 st.markdown(
     """
     <style>
         :root {
-            --primary: #111111;
-            --accent: #9E1B32;
-            --background: #F7F6F3;
-            --card: #FFFFFF;
-            --text: #202124;
-            --muted: #6B6F76;
-            --border: #E2E0DC;
-            --soft-accent: #F6EDEF;
-            --soft-neutral: #F1F0ED;
+            --deep-blue: #003B5C;
+            --primary-blue: #0066B3;
+            --bright-blue: #00A3E0;
+            --pale-blue: #EAF4FA;
+            --background: #F6F8FA;
+            --white: #FFFFFF;
+            --text: #1D2730;
+            --muted: #64717D;
+            --border: #DCE4EA;
+            --soft-grey: #EEF2F5;
         }
 
         .stApp {
@@ -49,16 +50,26 @@ st.markdown(
         }
 
         .block-container {
-            max-width: 1240px;
+            max-width: 1250px;
             padding-top: 2rem;
             padding-bottom: 4rem;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--deep-blue);
+            letter-spacing: -0.025em;
         }
 
         /* Sidebar */
 
         [data-testid="stSidebar"] {
-            background-color: var(--primary);
-            border-right: 1px solid rgba(255, 255, 255, 0.08);
+            background:
+                linear-gradient(
+                    180deg,
+                    #003B5C 0%,
+                    #004E75 100%
+                );
+            border-right: none;
         }
 
         [data-testid="stSidebar"] h1,
@@ -71,7 +82,7 @@ st.markdown(
         }
 
         [data-testid="stSidebar"] hr {
-            border-color: rgba(255, 255, 255, 0.16);
+            border-color: rgba(255, 255, 255, 0.18);
         }
 
         [data-testid="stSidebar"] .stSlider label,
@@ -81,15 +92,13 @@ st.markdown(
         }
 
         [data-testid="stSidebar"] [data-baseweb="tag"] {
-            background-color: var(--accent);
+            background-color: var(--primary-blue);
             border-radius: 5px;
         }
 
-        /* Typography */
-
-        h1, h2, h3, h4 {
-            color: var(--primary);
-            letter-spacing: -0.025em;
+        [data-testid="stSidebar"] [data-testid="stAlert"] {
+            background-color: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.18);
         }
 
         /* Hero */
@@ -100,45 +109,56 @@ st.markdown(
             background:
                 linear-gradient(
                     125deg,
-                    #111111 0%,
-                    #1C1C1C 58%,
-                    #4B111C 100%
+                    #003B5C 0%,
+                    #005A88 58%,
+                    #0066B3 100%
                 );
-            border-radius: 4px;
+            border-radius: 12px;
             padding: 3rem 3.1rem;
             margin-bottom: 1.5rem;
-            box-shadow: 0 16px 38px rgba(17, 17, 17, 0.16);
+            box-shadow: 0 18px 42px rgba(0, 59, 92, 0.18);
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            width: 340px;
+            height: 340px;
+            right: -120px;
+            top: -130px;
+            border: 58px solid rgba(0, 163, 224, 0.28);
+            border-radius: 50%;
         }
 
         .hero::after {
             content: "";
             position: absolute;
-            top: -90px;
-            right: -70px;
-            width: 280px;
-            height: 280px;
-            border: 52px solid rgba(158, 27, 50, 0.55);
+            width: 160px;
+            height: 160px;
+            right: 120px;
+            bottom: -105px;
+            background-color: rgba(255, 255, 255, 0.06);
             border-radius: 50%;
         }
 
         .hero-label {
             position: relative;
             z-index: 1;
-            color: #E6A7B2;
-            font-size: 0.75rem;
+            color: #9CDBF4;
+            font-size: 0.76rem;
             font-weight: 750;
             letter-spacing: 0.15em;
             text-transform: uppercase;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.8rem;
         }
 
         .hero-title {
             position: relative;
             z-index: 1;
-            max-width: 820px;
+            max-width: 840px;
             color: #FFFFFF;
-            font-size: 2.75rem;
-            line-height: 1.08;
+            font-size: 2.85rem;
+            line-height: 1.07;
             font-weight: 760;
             margin: 0;
         }
@@ -146,9 +166,9 @@ st.markdown(
         .hero-subtitle {
             position: relative;
             z-index: 1;
-            max-width: 720px;
-            color: rgba(255, 255, 255, 0.76);
-            font-size: 1.04rem;
+            max-width: 740px;
+            color: rgba(255, 255, 255, 0.82);
+            font-size: 1.05rem;
             line-height: 1.65;
             margin-top: 1rem;
             margin-bottom: 0;
@@ -159,14 +179,15 @@ st.markdown(
             z-index: 1;
             width: 72px;
             height: 4px;
-            margin-top: 1.5rem;
-            background-color: var(--accent);
+            margin-top: 1.55rem;
+            background-color: var(--bright-blue);
+            border-radius: 4px;
         }
 
-        /* Section headings */
+        /* Labels and status */
 
         .section-label {
-            color: var(--accent);
+            color: var(--primary-blue);
             font-size: 0.75rem;
             font-weight: 750;
             letter-spacing: 0.14em;
@@ -174,32 +195,31 @@ st.markdown(
             margin-bottom: 0.25rem;
         }
 
-        /* Dataset message */
-
         .progress-box {
-            background-color: var(--card);
+            background-color: var(--white);
             border: 1px solid var(--border);
-            border-left: 5px solid var(--accent);
-            border-radius: 4px;
+            border-left: 5px solid var(--primary-blue);
+            border-radius: 8px;
             padding: 0.95rem 1.1rem;
             margin-bottom: 1.5rem;
             color: var(--text);
-            box-shadow: 0 4px 14px rgba(17, 17, 17, 0.04);
+            box-shadow: 0 5px 16px rgba(0, 59, 92, 0.05);
         }
 
         /* Metric cards */
 
         [data-testid="stMetric"] {
-            background-color: var(--card);
+            background-color: var(--white);
             border: 1px solid var(--border);
-            border-radius: 4px;
+            border-top: 4px solid var(--primary-blue);
+            border-radius: 8px;
             padding: 1.05rem 1.15rem;
-            box-shadow: 0 4px 14px rgba(17, 17, 17, 0.04);
+            box-shadow: 0 5px 17px rgba(0, 59, 92, 0.05);
         }
 
         [data-testid="stMetricValue"] {
-            color: var(--primary);
-            font-weight: 750;
+            color: var(--deep-blue);
+            font-weight: 760;
         }
 
         [data-testid="stMetricLabel"] {
@@ -209,28 +229,41 @@ st.markdown(
         /* Ranking table */
 
         div[data-testid="stDataFrame"] {
-            background-color: var(--card);
+            background-color: var(--white);
             border: 1px solid var(--border);
-            border-radius: 4px;
+            border-radius: 9px;
             overflow: hidden;
-            box-shadow: 0 6px 20px rgba(17, 17, 17, 0.05);
+            box-shadow: 0 7px 22px rgba(0, 59, 92, 0.06);
         }
 
         /* Recommendation */
 
         .recommendation-card {
-            background-color: var(--card);
+            position: relative;
+            overflow: hidden;
+            background-color: var(--white);
             border: 1px solid var(--border);
-            border-top: 6px solid var(--accent);
-            border-radius: 4px;
-            padding: 1.7rem 1.8rem;
+            border-left: 6px solid var(--primary-blue);
+            border-radius: 9px;
+            padding: 1.75rem 1.85rem;
             margin-top: 0.8rem;
             margin-bottom: 1.2rem;
-            box-shadow: 0 8px 26px rgba(17, 17, 17, 0.07);
+            box-shadow: 0 9px 28px rgba(0, 59, 92, 0.08);
+        }
+
+        .recommendation-card::after {
+            content: "";
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            right: -85px;
+            top: -85px;
+            background-color: var(--pale-blue);
+            border-radius: 50%;
         }
 
         .recommendation-label {
-            color: var(--accent);
+            color: var(--primary-blue);
             font-size: 0.75rem;
             font-weight: 750;
             letter-spacing: 0.13em;
@@ -238,7 +271,7 @@ st.markdown(
         }
 
         .recommendation-school {
-            color: var(--primary);
+            color: var(--deep-blue);
             font-size: 1.85rem;
             line-height: 1.25;
             font-weight: 760;
@@ -252,14 +285,18 @@ st.markdown(
         }
 
         .recommendation-score {
-            color: var(--accent);
-            font-size: 2.35rem;
+            position: relative;
+            z-index: 1;
+            color: var(--primary-blue);
+            font-size: 2.4rem;
             line-height: 1;
             font-weight: 800;
             text-align: right;
         }
 
         .recommendation-score-label {
+            position: relative;
+            z-index: 1;
             color: var(--muted);
             font-size: 0.8rem;
             text-align: right;
@@ -269,33 +306,33 @@ st.markdown(
         /* Strengths and drawbacks */
 
         .strength {
-            background-color: var(--soft-neutral);
-            border-left: 4px solid #333333;
-            border-radius: 3px;
-            padding: 0.78rem 0.9rem;
+            background-color: var(--pale-blue);
+            border-left: 4px solid var(--primary-blue);
+            border-radius: 6px;
+            padding: 0.8rem 0.9rem;
             margin-bottom: 0.6rem;
-            color: #303234;
+            color: var(--deep-blue);
         }
 
         .drawback {
-            background-color: var(--soft-accent);
-            border-left: 4px solid var(--accent);
-            border-radius: 3px;
-            padding: 0.78rem 0.9rem;
+            background-color: var(--soft-grey);
+            border-left: 4px solid #8698A6;
+            border-radius: 6px;
+            padding: 0.8rem 0.9rem;
             margin-bottom: 0.6rem;
-            color: #671322;
+            color: #44535F;
         }
 
-        /* Notices */
+        /* Notices and disclaimer */
 
         div[data-testid="stAlert"] {
-            border-radius: 4px;
+            border-radius: 7px;
         }
 
         .disclaimer {
-            background-color: var(--card);
+            background-color: var(--white);
             border: 1px solid var(--border);
-            border-radius: 4px;
+            border-radius: 8px;
             padding: 1rem 1.1rem;
             color: var(--muted);
             font-size: 0.84rem;
@@ -306,23 +343,23 @@ st.markdown(
         /* Buttons */
 
         .stButton > button {
-            background-color: var(--accent);
+            background-color: var(--primary-blue);
             color: #FFFFFF;
-            border: 1px solid var(--accent);
-            border-radius: 3px;
+            border: 1px solid var(--primary-blue);
+            border-radius: 6px;
             font-weight: 650;
         }
 
         .stButton > button:hover {
-            background-color: #7F1528;
-            border-color: #7F1528;
+            background-color: var(--deep-blue);
+            border-color: var(--deep-blue);
             color: #FFFFFF;
         }
 
-        /* Inputs */
+        /* Form controls */
 
         div[data-baseweb="select"] > div {
-            border-radius: 3px;
+            border-radius: 6px;
         }
 
         /* Mobile */
@@ -333,11 +370,12 @@ st.markdown(
             }
 
             .hero-title {
-                font-size: 2.05rem;
+                font-size: 2.1rem;
             }
 
+            .hero::before,
             .hero::after {
-                opacity: 0.4;
+                opacity: 0.45;
             }
 
             .recommendation-score,
@@ -359,10 +397,12 @@ st.markdown(
     """
     <div class="hero">
         <div class="hero-label">Global exchange decision tool</div>
-        <div class="hero-title">Find the CEMS destination that fits you.</div>
+        <div class="hero-title">
+            Find the international destination that fits you.
+        </div>
         <p class="hero-subtitle">
-            Compare international exchange opportunities using your academic,
-            career, financial and lifestyle priorities.
+            Compare CEMS exchange opportunities using your academic,
+            professional, financial and lifestyle priorities.
         </p>
         <div class="accent-line"></div>
     </div>
@@ -712,10 +752,10 @@ st.markdown(
     """
     <div class="disclaimer">
         <strong>Independent student project.</strong>
-        This prototype is not an official CEMS platform. Scores are constructed
-        indicators and cost figures are approximate. The tool is intended to
-        support comparison, not replace official university information or
-        personal judgement.
+        This prototype is not an official Bocconi or CEMS platform.
+        Scores are constructed indicators and cost figures are approximate.
+        The tool is intended to support comparison, not replace official
+        university information or personal judgement.
     </div>
     """,
     unsafe_allow_html=True,
