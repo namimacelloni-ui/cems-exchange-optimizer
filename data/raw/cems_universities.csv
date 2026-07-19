@@ -1,16 +1,16 @@
-school_name,city,country,region,teaching_language,estimated_monthly_cost_eur,housing_cost_eur,flight_cost_from_milan_eur,academic_score,career_score,lifestyle_score,international_environment_score,housing_difficulty_score,english_friendliness_score,visa_required_for_eu
-ESADE,Barcelona,Spain,Southern Europe,,,,,,,,,,,
-Nova SBE,Lisbon,Portugal,Southern Europe,English,,,,5,4,5,5,3,5,FALSE
-HEC Paris,Jouy-en-Josas,France,Western Europe,,,,,,,,,,,
-Rotterdam School of Management,Rotterdam,Netherlands,Western Europe,,,,,,,,,,,
-University of St. Gallen,St. Gallen,Switzerland,Western Europe,,,,,,,,,,,
-Copenhagen Business School,Copenhagen,Denmark,Northern Europe,English,1500,850,180,5,5,4,5,4,5,FALSE
-Stockholm School of Economics,Stockholm,Sweden,Northern Europe,,,,,,,,,,,
-WU Vienna,Vienna,Austria,Central Europe,,,,,,,,,,,
-Prague University of Economics and Business,Prague,Czech Republic,Central Europe,,,,,,,,,,,
-National University of Singapore,Singapore,Singapore,Asia,,,,,,,,,,,
-HKUST Business School,Hong Kong,Hong Kong,Asia,,,,,,,,,,,
-Keio University,Tokyo,Japan,Asia,,,,,,,,,,,
-Cornell SC Johnson College of Business,Ithaca,United States,North America,,,,,,,,,,,
-FGV EAESP,Sao Paulo,Brazil,South America,,,,,,,,,,,
-University of Sydney Business School,Sydney,Australia,Oceania,,,,,,,,,,,
+school_name,city,country,region,teaching_language,estimated_monthly_cost_eur,housing_cost_eur,flight_cost_from_milan_eur,academic_score,career_score,lifestyle_score,international_environment_score,housing_difficulty_score,english_friendliness_score,visa_required_for_eu,data_status
+ESADE,Barcelona,Spain,Southern Europe,,,,,,,,,,,,not_started
+Nova SBE,Lisbon,Portugal,Southern Europe,English,,,,5,4,5,5,3,5,FALSE,partial
+HEC Paris,Jouy-en-Josas,France,Western Europe,,,,,,,,,,,,not_started
+Rotterdam School of Management,Rotterdam,Netherlands,Western Europe,,,,,,,,,,,,not_started
+University of St. Gallen,St. Gallen,Switzerland,Western Europe,,,,,,,,,,,,not_started
+Copenhagen Business School,Copenhagen,Denmark,Northern Europe,English,1500,850,180,5,5,4,5,4,5,FALSE,partial
+Stockholm School of Economics,Stockholm,Sweden,Northern Europe,,,,,,,,,,,,not_started
+WU Vienna,Vienna,Austria,Central Europe,,,,,,,,,,,,not_started
+Prague University of Economics and Business,Prague,Czech Republic,Central Europe,,,,,,,,,,,,not_started
+National University of Singapore,Singapore,Singapore,Asia,,,,,,,,,,,,not_started
+HKUST Business School,Hong Kong,Hong Kong,Asia,,,,,,,,,,,,not_started
+Keio University,Tokyo,Japan,Asia,,,,,,,,,,,,not_started
+Cornell SC Johnson College of Business,Ithaca,United States,North America,,,,,,,,,,,,not_started
+FGV EAESP,Sao Paulo,Brazil,South America,,,,,,,,,,,,not_started
+University of Sydney Business School,Sydney,Australia,Oceania,,,,,,,,,,,,not_started
