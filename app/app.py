@@ -10,6 +10,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.append(str(PROJECT_ROOT))
 
 
+from src.explanations import generate_recommendation_explanation
 from src.load_data import load_university_data
 from src.ranking import calculate_weighted_score
 from src.scoring import add_normalized_scores
@@ -31,6 +32,7 @@ st.write(
 
 
 universities = load_university_data()
+
 complete_school_count = (
     universities["data_status"]
     .isin(["partial", "complete"])
@@ -41,6 +43,7 @@ st.info(
     f"Dataset progress: {complete_school_count} of "
     f"{len(universities)} universities currently contain research data."
 )
+
 
 # -------------------------
 # Practical filters
@@ -150,7 +153,6 @@ total_weight = (
     + housing_weight
 )
 
-
 st.sidebar.write(f"Total weight: {total_weight}%")
 
 
@@ -242,6 +244,7 @@ else:
         st.subheader("Top recommendation")
 
         top_school = available_results.iloc[0]
+        explanation = generate_recommendation_explanation(top_school)
 
         st.metric(
             label=top_school["school_name"],
@@ -254,6 +257,20 @@ else:
             "has the highest compatibility score based on your filters "
             "and selected priorities."
         )
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            st.markdown("#### Main strengths")
+
+            for strength in explanation["strengths"]:
+                st.write(f"✓ {strength}")
+
+        with col2:
+            st.markdown("#### Potential drawbacks")
+
+            for drawback in explanation["drawbacks"]:
+                st.write(f"– {drawback}")
 
 
 st.divider()
