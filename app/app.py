@@ -27,7 +27,7 @@ st.title("CEMS Exchange Destination Optimizer")
 
 st.write(
     "Compare CEMS exchange destinations according to your academic, "
-    "career, lifestyle and practical preferences."
+    "career, financial, lifestyle and practical preferences."
 )
 
 
@@ -71,6 +71,14 @@ selected_languages = st.sidebar.multiselect(
     default=available_languages,
 )
 
+maximum_budget = st.sidebar.slider(
+    "Maximum monthly budget (€)",
+    min_value=800,
+    max_value=2500,
+    value=1800,
+    step=50,
+)
+
 visa_free_only = st.sidebar.checkbox(
     "Show only destinations without a student visa for EU citizens",
     value=False,
@@ -83,6 +91,10 @@ filtered_universities = universities[
 
 filtered_universities = filtered_universities[
     filtered_universities["teaching_language"].isin(selected_languages)
+].copy()
+
+filtered_universities = filtered_universities[
+    filtered_universities["estimated_monthly_cost_eur"] <= maximum_budget
 ].copy()
 
 if visa_free_only:
@@ -184,14 +196,14 @@ else:
     st.subheader("Current ranking")
 
     st.caption(
-        "Only universities with complete scoring data are shown. "
-        "The dataset is still under development."
+        "Only universities matching the selected constraints and containing "
+        "complete scoring data are shown."
     )
 
     if available_results.empty:
         st.info(
-            "No universities match your filters and currently have "
-            "enough data to be ranked."
+            "No universities match your current filters. Try increasing "
+            "your budget or selecting additional regions."
         )
 
     else:
@@ -205,6 +217,7 @@ else:
                 "city",
                 "country",
                 "region",
+                "estimated_monthly_cost_eur",
                 "final_score",
                 "academic_score",
                 "career_score",
@@ -225,6 +238,7 @@ else:
                 "city": "City",
                 "country": "Country",
                 "region": "Region",
+                "estimated_monthly_cost_eur": "Monthly cost (€)",
                 "final_score": "Final score",
                 "academic_score": "Academic",
                 "career_score": "Career",
@@ -258,6 +272,11 @@ else:
             "and selected priorities."
         )
 
+        st.write(
+            f"Estimated monthly student cost: "
+            f"€{top_school['estimated_monthly_cost_eur']:.0f}"
+        )
+
         col1, col2 = st.columns(2)
 
         with col1:
@@ -276,7 +295,7 @@ else:
 st.divider()
 
 st.caption(
-    "This prototype uses constructed scores and incomplete data. "
+    "This prototype uses constructed scores and approximate cost estimates. "
     "It is intended as a transparent decision-support tool rather "
     "than an objective university ranking."
 )
