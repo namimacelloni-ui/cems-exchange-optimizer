@@ -31,9 +31,62 @@ st.write(
 
 
 universities = load_university_data()
-normalized_data = add_normalized_scores(universities)
 
 
+# -------------------------
+# Practical filters
+# -------------------------
+
+st.sidebar.header("Practical constraints")
+
+available_regions = sorted(
+    universities["region"].dropna().unique().tolist()
+)
+
+selected_regions = st.sidebar.multiselect(
+    "Preferred regions",
+    options=available_regions,
+    default=available_regions,
+)
+
+available_languages = sorted(
+    universities["teaching_language"].dropna().unique().tolist()
+)
+
+selected_languages = st.sidebar.multiselect(
+    "Teaching language",
+    options=available_languages,
+    default=available_languages,
+)
+
+visa_free_only = st.sidebar.checkbox(
+    "Show only destinations without a student visa for EU citizens",
+    value=False,
+)
+
+
+filtered_universities = universities[
+    universities["region"].isin(selected_regions)
+].copy()
+
+filtered_universities = filtered_universities[
+    filtered_universities["teaching_language"].isin(selected_languages)
+].copy()
+
+if visa_free_only:
+    filtered_universities = filtered_universities[
+        filtered_universities["visa_required_for_eu"] == False
+    ].copy()
+
+
+normalized_data = add_normalized_scores(filtered_universities)
+
+
+# -------------------------
+# Priority weights
+# -------------------------
+
+st.sidebar.divider()
 st.sidebar.header("Your priorities")
 
 academic_weight = st.sidebar.slider(
@@ -126,15 +179,21 @@ else:
 
     if available_results.empty:
         st.info(
-            "No universities currently have enough data to be ranked."
+            "No universities match your filters and currently have "
+            "enough data to be ranked."
         )
 
     else:
+        st.write(
+            f"Showing {len(available_results)} eligible destination(s)."
+        )
+
         display_data = available_results[
             [
                 "school_name",
                 "city",
                 "country",
+                "region",
                 "final_score",
                 "academic_score",
                 "career_score",
@@ -154,6 +213,7 @@ else:
                 "school_name": "School",
                 "city": "City",
                 "country": "Country",
+                "region": "Region",
                 "final_score": "Final score",
                 "academic_score": "Academic",
                 "career_score": "Career",
@@ -182,8 +242,8 @@ else:
         st.write(
             f"{top_school['school_name']} in "
             f"{top_school['city']}, {top_school['country']} currently "
-            "has the highest compatibility score based on your selected "
-            "priorities."
+            "has the highest compatibility score based on your filters "
+            "and selected priorities."
         )
 
 
