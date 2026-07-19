@@ -1,8 +1,8 @@
 school_name,city,country,region,teaching_language,estimated_monthly_cost_eur,housing_cost_eur,flight_cost_from_milan_eur,academic_score,career_score,lifestyle_score,international_environment_score,housing_difficulty_score,english_friendliness_score,visa_required_for_eu,data_status
-ESADE,Barcelona,Spain,Southern Europe,,,,,,,,,,,,not_started
+ESADE,Barcelona,Spain,Southern Europe,English,,,,5,5,5,5,3,5,FALSE,partial
 Nova SBE,Lisbon,Portugal,Southern Europe,English,,,,5,4,5,5,3,5,FALSE,partial
-HEC Paris,Jouy-en-Josas,France,Western Europe,,,,,,,,,,,,not_started
-Rotterdam School of Management,Rotterdam,Netherlands,Western Europe,,,,,,,,,,,,not_started
+HEC Paris,Jouy-en-Josas,France,Western Europe,English,,,,5,5,4,5,2,4,FALSE,partial
+Rotterdam School of Management,Rotterdam,Netherlands,Western Europe,English,,,,5,5,4,5,4,5,FALSE,partial
 University of St. Gallen,St. Gallen,Switzerland,Western Europe,,,,,,,,,,,,not_started
 Copenhagen Business School,Copenhagen,Denmark,Northern Europe,English,1500,850,180,5,5,4,5,4,5,FALSE,partial
 Stockholm School of Economics,Stockholm,Sweden,Northern Europe,,,,,,,,,,,,not_started
