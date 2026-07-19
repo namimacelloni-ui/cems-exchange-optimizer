@@ -24,9 +24,6 @@ The CEMS Exchange Destination Optimizer brings these factors together in one int
 - Explanation of the main strengths and drawbacks of the top recommendation
 - Automated tests for the scoring and ranking logic
 
-## Screenshot
-
-![CEMS Exchange Optimizer screenshot](assets/app_screenshot.png)
 
 ## How it works
 
