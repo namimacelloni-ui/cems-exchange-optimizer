@@ -687,7 +687,12 @@ else:
         )
 
         top_school = available_results.iloc[0]
-        explanation = generate_recommendation_explanation(top_school)
+        explanation = generate_recommendation_explanation(
+        university=top_school,
+        ranked_data=available_results,
+        weights=weights,
+        maximum_budget=maximum_budget,
+    )
 
         st.markdown(
             f"""
