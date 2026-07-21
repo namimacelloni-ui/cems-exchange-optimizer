@@ -1,1 +1,6 @@
-school_name,category,indicator,raw_value,normalized_score,weight,weighted_score,source_name,source_url,reference_year,source_type,confidence_level,notes
+school_name,category,indicator,normalized_score,weight,weighted_score,source_name,source_url,reference_year,source_type,confidence_level,notes
+Copenhagen Business School,academic,course_breadth,90,0.30,27.0,CBS course catalogue,,2026,Official,Medium,"Broad range of English-taught management courses; exact course count still needs validation"
+Copenhagen Business School,academic,subject_area_coverage,95,0.25,23.75,CBS course catalogue,,2026,Official,Medium,"Strong coverage of strategy finance marketing sustainability entrepreneurship and analytics"
+Copenhagen Business School,academic,graduate_course_access,90,0.20,18.0,CBS exchange information,,2026,Official,Medium,"Incoming graduate exchange students can access a broad selection of graduate-level courses"
+Copenhagen Business School,academic,course_accessibility,80,0.15,12.0,CBS exchange information,,2026,Official,Medium,"Some prerequisites capacity restrictions and programme limitations may apply"
+Copenhagen Business School,academic,academic_flexibility,75,0.10,7.5,CBS academic information,,2026,Official,Medium,"Good course flexibility but timetable clashes and enrolment rules may restrict combinations"
