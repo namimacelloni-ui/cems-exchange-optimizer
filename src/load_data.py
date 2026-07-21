@@ -25,7 +25,6 @@ CATEGORY_COLUMN_MAP = {
     "lifestyle": "lifestyle_score",
     "international": "international_score",
     "english_friendliness": "english_friendliness_score",
-    "housing": "housing_score",
 }
 
 
@@ -66,6 +65,71 @@ def validate_cost_data(costs: pd.DataFrame) -> None:
             "Duplicate schools found in the cost dataset: "
             f"{duplicated_schools}"
         )
+
+
+def add_housing_score(data: pd.DataFrame) -> pd.DataFrame:
+    """
+    Calculate a housing-practicality score from structured cost data.
+
+    The score combines:
+    - affordability: 80%
+    - cost predictability: 20%
+
+    Lower typical housing cost receives a higher score.
+    A smaller gap between low and high estimates receives a higher score.
+    """
+
+    minimum_typical_cost = data["housing_typical_eur"].min()
+    maximum_typical_cost = data["housing_typical_eur"].max()
+
+    typical_cost_range = (
+        maximum_typical_cost - minimum_typical_cost
+    )
+
+    if typical_cost_range == 0:
+        data["housing_affordability_component"] = 100.0
+    else:
+        data["housing_affordability_component"] = (
+            100
+            * (
+                maximum_typical_cost
+                - data["housing_typical_eur"]
+            )
+            / typical_cost_range
+        )
+
+    data["housing_cost_spread_eur"] = (
+        data["housing_high_eur"]
+        - data["housing_low_eur"]
+    )
+
+    minimum_spread = data["housing_cost_spread_eur"].min()
+    maximum_spread = data["housing_cost_spread_eur"].max()
+
+    spread_range = maximum_spread - minimum_spread
+
+    if spread_range == 0:
+        data["housing_predictability_component"] = 100.0
+    else:
+        data["housing_predictability_component"] = (
+            100
+            * (
+                maximum_spread
+                - data["housing_cost_spread_eur"]
+            )
+            / spread_range
+        )
+
+    data["housing_score_component"] = (
+        0.80 * data["housing_affordability_component"]
+        + 0.20 * data["housing_predictability_component"]
+    )
+
+    data["housing_score"] = (
+        1 + data["housing_score_component"] / 25
+    )
+
+    return data
 
 
 def merge_component_scores(
@@ -127,12 +191,10 @@ def merge_component_scores(
 
 def load_university_data() -> pd.DataFrame:
     """
-    Load and merge university, cost and component-score data.
+    Load university, cost and component-score data.
 
-    Structured monthly costs replace the original prototype costs.
-
-    Every complete category in score_components.csv is automatically
-    merged into the main dataset.
+    Housing scores are calculated directly from structured housing costs.
+    Other component categories are loaded from score_components.csv.
     """
 
     if not UNIVERSITIES_PATH.exists():
@@ -176,6 +238,8 @@ def load_university_data() -> pd.DataFrame:
         data["monthly_cost_typical_eur"]
     )
 
+    data = add_housing_score(data)
+
     score_components = load_score_components()
 
     category_scores = calculate_category_scores(
@@ -198,14 +262,13 @@ if __name__ == "__main__":
 
     display_columns = [
         "school_name",
+        "housing_typical_eur",
+        "housing_affordability_component",
+        "housing_predictability_component",
+        "housing_score_component",
+        "housing_score",
         "academic_score_component",
-        "academic_score",
         "career_score_component",
-        "career_score",
-        "monthly_cost_low_eur",
-        "monthly_cost_typical_eur",
-        "monthly_cost_high_eur",
-        "confidence_level",
     ]
 
     available_columns = [
@@ -214,7 +277,7 @@ if __name__ == "__main__":
         if column in university_data.columns
     ]
 
-    print("\nCurrent component scores and monthly costs:")
+    print("\nCurrent component scores and housing data:")
 
     print(
         university_data[
