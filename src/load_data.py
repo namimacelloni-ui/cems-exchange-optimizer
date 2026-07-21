@@ -19,15 +19,120 @@ COST_ESTIMATES_PATH = (
 )
 
 
+CATEGORY_COLUMN_MAP = {
+    "academic": "academic_score",
+    "career": "career_score",
+    "lifestyle": "lifestyle_score",
+    "international": "international_score",
+    "english_friendliness": "english_friendliness_score",
+    "housing": "housing_score",
+}
+
+
+def validate_cost_data(costs: pd.DataFrame) -> None:
+    """Validate the structured monthly-cost dataset."""
+
+    required_cost_columns = {
+        "school_name",
+        "housing_low_eur",
+        "housing_typical_eur",
+        "housing_high_eur",
+        "monthly_cost_low_eur",
+        "monthly_cost_typical_eur",
+        "monthly_cost_high_eur",
+        "confidence_level",
+    }
+
+    missing_columns = required_cost_columns.difference(
+        costs.columns
+    )
+
+    if missing_columns:
+        raise ValueError(
+            "The cost dataset is missing required columns: "
+            f"{sorted(missing_columns)}"
+        )
+
+    if costs.empty:
+        raise ValueError("The cost estimate dataset is empty.")
+
+    if costs["school_name"].duplicated().any():
+        duplicated_schools = costs.loc[
+            costs["school_name"].duplicated(),
+            "school_name",
+        ].tolist()
+
+        raise ValueError(
+            "Duplicate schools found in the cost dataset: "
+            f"{duplicated_schools}"
+        )
+
+
+def merge_component_scores(
+    data: pd.DataFrame,
+    category_scores: pd.DataFrame,
+) -> pd.DataFrame:
+    """
+    Merge every available component-based category score.
+
+    Component scores use a 0–100 scale. They are converted to the
+    existing 1–5 scale so the current ranking system remains compatible.
+    """
+
+    for category, score_column in CATEGORY_COLUMN_MAP.items():
+        category_data = category_scores[
+            category_scores["category"] == category
+        ][
+            [
+                "school_name",
+                "category_score",
+            ]
+        ].copy()
+
+        if category_data.empty:
+            continue
+
+        component_column = f"{score_column}_component"
+
+        category_data = category_data.rename(
+            columns={
+                "category_score": component_column,
+            }
+        )
+
+        data = data.merge(
+            category_data,
+            on="school_name",
+            how="left",
+            validate="one_to_one",
+        )
+
+        missing_scores = data.loc[
+            data[component_column].isna(),
+            "school_name",
+        ].tolist()
+
+        if missing_scores:
+            raise ValueError(
+                f"Missing component-based {category} scores for: "
+                f"{missing_scores}"
+            )
+
+        data[score_column] = (
+            1 + data[component_column] / 25
+        )
+
+    return data
+
+
 def load_university_data() -> pd.DataFrame:
     """
     Load and merge university, cost and component-score data.
 
     Structured monthly costs replace the original prototype costs.
 
-    Academic and career component scores are converted from 0–100
-    to the equivalent 1–5 scale so the existing scoring pipeline
-    remains compatible.
+    Every complete category in score_components.csv is automatically
+    merged into the main dataset.
     """
 
     if not UNIVERSITIES_PATH.exists():
@@ -46,40 +151,7 @@ def load_university_data() -> pd.DataFrame:
     if universities.empty:
         raise ValueError("The university dataset is empty.")
 
-    if costs.empty:
-        raise ValueError("The cost estimate dataset is empty.")
-
-    required_cost_columns = {
-        "school_name",
-        "housing_low_eur",
-        "housing_typical_eur",
-        "housing_high_eur",
-        "monthly_cost_low_eur",
-        "monthly_cost_typical_eur",
-        "monthly_cost_high_eur",
-        "confidence_level",
-    }
-
-    missing_cost_columns = required_cost_columns.difference(
-        costs.columns
-    )
-
-    if missing_cost_columns:
-        raise ValueError(
-            "The cost dataset is missing required columns: "
-            f"{sorted(missing_cost_columns)}"
-        )
-
-    if costs["school_name"].duplicated().any():
-        duplicated_schools = costs.loc[
-            costs["school_name"].duplicated(),
-            "school_name",
-        ].tolist()
-
-        raise ValueError(
-            "Duplicate schools found in the cost dataset: "
-            f"{duplicated_schools}"
-        )
+    validate_cost_data(costs)
 
     data = universities.merge(
         costs,
@@ -110,74 +182,9 @@ def load_university_data() -> pd.DataFrame:
         score_components
     )
 
-    academic_scores = category_scores[
-        category_scores["category"] == "academic"
-    ][
-        [
-            "school_name",
-            "category_score",
-        ]
-    ].rename(
-        columns={
-            "category_score": "academic_score_component",
-        }
-    )
-
-    data = data.merge(
-        academic_scores,
-        on="school_name",
-        how="left",
-        validate="one_to_one",
-    )
-
-    missing_academic_scores = data.loc[
-        data["academic_score_component"].isna(),
-        "school_name",
-    ].tolist()
-
-    if missing_academic_scores:
-        raise ValueError(
-            "Missing component-based academic scores for: "
-            f"{missing_academic_scores}"
-        )
-
-    data["academic_score"] = (
-        1 + data["academic_score_component"] / 25
-    )
-
-    career_scores = category_scores[
-        category_scores["category"] == "career"
-    ][
-        [
-            "school_name",
-            "category_score",
-        ]
-    ].rename(
-        columns={
-            "category_score": "career_score_component",
-        }
-    )
-
-    data = data.merge(
-        career_scores,
-        on="school_name",
-        how="left",
-        validate="one_to_one",
-    )
-
-    missing_career_scores = data.loc[
-        data["career_score_component"].isna(),
-        "school_name",
-    ].tolist()
-
-    if missing_career_scores:
-        raise ValueError(
-            "Missing component-based career scores for: "
-            f"{missing_career_scores}"
-        )
-
-    data["career_score"] = (
-        1 + data["career_score_component"] / 25
+    data = merge_component_scores(
+        data=data,
+        category_scores=category_scores,
     )
 
     return data
@@ -189,20 +196,28 @@ if __name__ == "__main__":
     print("Datasets loaded and merged successfully.")
     print(f"Number of universities: {len(university_data)}")
 
-    print("\nUpdated academic, career and monthly cost data:")
+    display_columns = [
+        "school_name",
+        "academic_score_component",
+        "academic_score",
+        "career_score_component",
+        "career_score",
+        "monthly_cost_low_eur",
+        "monthly_cost_typical_eur",
+        "monthly_cost_high_eur",
+        "confidence_level",
+    ]
+
+    available_columns = [
+        column
+        for column in display_columns
+        if column in university_data.columns
+    ]
+
+    print("\nCurrent component scores and monthly costs:")
 
     print(
         university_data[
-            [
-                "school_name",
-                "academic_score_component",
-                "academic_score",
-                "career_score_component",
-                "career_score",
-                "monthly_cost_low_eur",
-                "monthly_cost_typical_eur",
-                "monthly_cost_high_eur",
-                "confidence_level",
-            ]
+            available_columns
         ].to_string(index=False)
     )
