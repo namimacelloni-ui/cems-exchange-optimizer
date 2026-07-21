@@ -23,11 +23,11 @@ def load_university_data() -> pd.DataFrame:
     """
     Load and merge university, cost and component-score data.
 
-    The structured monthly cost replaces the original prototype cost.
+    Structured monthly costs replace the original prototype costs.
 
-    The calculated academic component score is converted from 0–100
-    to the equivalent 1–5 scale so that the existing normalization
-    and ranking functions remain compatible.
+    Academic and career component scores are converted from 0–100
+    to the equivalent 1–5 scale so the existing scoring pipeline
+    remains compatible.
     """
 
     if not UNIVERSITIES_PATH.exists():
@@ -145,6 +145,41 @@ def load_university_data() -> pd.DataFrame:
         1 + data["academic_score_component"] / 25
     )
 
+    career_scores = category_scores[
+        category_scores["category"] == "career"
+    ][
+        [
+            "school_name",
+            "category_score",
+        ]
+    ].rename(
+        columns={
+            "category_score": "career_score_component",
+        }
+    )
+
+    data = data.merge(
+        career_scores,
+        on="school_name",
+        how="left",
+        validate="one_to_one",
+    )
+
+    missing_career_scores = data.loc[
+        data["career_score_component"].isna(),
+        "school_name",
+    ].tolist()
+
+    if missing_career_scores:
+        raise ValueError(
+            "Missing component-based career scores for: "
+            f"{missing_career_scores}"
+        )
+
+    data["career_score"] = (
+        1 + data["career_score_component"] / 25
+    )
+
     return data
 
 
@@ -154,7 +189,7 @@ if __name__ == "__main__":
     print("Datasets loaded and merged successfully.")
     print(f"Number of universities: {len(university_data)}")
 
-    print("\nUpdated academic and monthly cost data:")
+    print("\nUpdated academic, career and monthly cost data:")
 
     print(
         university_data[
@@ -162,6 +197,8 @@ if __name__ == "__main__":
                 "school_name",
                 "academic_score_component",
                 "academic_score",
+                "career_score_component",
+                "career_score",
                 "monthly_cost_low_eur",
                 "monthly_cost_typical_eur",
                 "monthly_cost_high_eur",
