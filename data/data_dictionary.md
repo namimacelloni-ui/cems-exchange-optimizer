@@ -1,186 +1,136 @@
 # Data Dictionary
 
-This document defines the variables used in the CEMS Exchange Destination Optimizer.
+This document describes the datasets used by the CEMS Exchange Destination Optimizer.
 
-## Identification variables
+## `data/raw/cems_universities.csv`
 
-### school_name
+Contains stable information about each exchange destination and a small number of simplified contextual indicators.
 
-- **Description:** Official or commonly used name of the CEMS member school
-- **Type:** Text
-- **Example:** Copenhagen Business School
-- **Source:** CEMS or the university’s official website
+| Column | Description |
+|---|---|
+| `school_name` | Name of the CEMS partner school |
+| `city` | City where the school is located |
+| `country` | Country where the school is located |
+| `region` | Geographic region used by the application filters |
+| `teaching_language` | Main teaching language available to exchange students |
+| `flight_cost_from_milan_eur` | Approximate return travel cost from Milan, expressed in euros |
+| `lifestyle_score` | Simplified comparative lifestyle score from 1 to 5 |
+| `international_environment_score` | Simplified comparative international-environment score from 1 to 5 |
+| `english_friendliness_score` | Simplified comparative English-accessibility score from 1 to 5 |
+| `visa_required_for_eu` | Whether an EU citizen generally requires a visa for the exchange destination |
+| `data_status` | Indicates whether the destination data is complete, partial, or under review |
 
-### city
+The lifestyle, international-environment, and English-friendliness scores are project estimates rather than official university ratings.
 
-- **Description:** Main city in which the school is located
-- **Type:** Text
-- **Example:** Copenhagen
+## `data/raw/cost_estimates.csv`
 
-### country
+Contains structured estimates of monthly living and housing costs.
 
-- **Description:** Country in which the school is located
-- **Type:** Text
-- **Example:** Denmark
+| Column | Description |
+|---|---|
+| `school_name` | Name used to connect the cost estimate to the university dataset |
+| `city` | City where the school is located |
+| `housing_low_eur` | Lower monthly housing-cost estimate |
+| `housing_typical_eur` | Typical monthly housing-cost estimate |
+| `housing_high_eur` | Higher monthly housing-cost estimate |
+| `non_housing_monthly_eur` | Typical monthly non-housing expenses |
+| `monthly_cost_low_eur` | Lower estimate of total monthly living costs |
+| `monthly_cost_typical_eur` | Typical estimate of total monthly living costs |
+| `monthly_cost_high_eur` | Higher estimate of total monthly living costs |
+| `cost_reference_year` | Year represented by the estimate |
+| `source_type` | Type of source used to construct the estimate |
+| `confidence_level` | Qualitative assessment of the estimate's reliability |
+| `notes` | Assumptions, limitations, or explanatory comments |
 
-### region
+The application uses `monthly_cost_typical_eur` for the maximum-budget filter.
 
-- **Description:** Broad geographical region used for filtering destinations
-- **Type:** Category
-- **Possible values:** Southern Europe, Western Europe, Northern Europe, Central Europe, Asia, North America, South America, Oceania
+The low and high values are shown to communicate uncertainty rather than present one exact cost.
 
----
+## `data/raw/score_components.csv`
 
-## Language variables
+Contains the indicators used to calculate the academic and career category scores.
 
-### teaching_language
+| Column | Description |
+|---|---|
+| `school_name` | Name used to connect the component to the university dataset |
+| `category` | Scoring category, currently `academic` or `career` |
+| `indicator` | Name of the individual component |
+| `normalized_score` | Indicator score from 0 to 100 |
+| `weight` | Importance of the indicator within its category |
+| `weighted_score` | `normalized_score` multiplied by `weight` |
+| `source_name` | Name of the information source |
+| `source_url` | Link to the supporting source |
+| `reference_year` | Year represented by the source or assessment |
+| `source_type` | Classification of the supporting source |
+| `confidence_level` | Qualitative assessment of evidence quality |
+| `notes` | Explanation of the score and its limitations |
 
-- **Description:** Main language in which exchange or CEMS courses are taught
-- **Type:** Text
-- **Example:** English
-- **Possible values:** English, English and local language, Local language
-- **Source:** Official university course catalogue or exchange information
+For every school and category, the indicator weights should add up to `1.0`.
 
-### english_friendliness_score
+The category score is calculated as:
 
-- **Description:** Estimated ease with which an international student can study and manage daily life using English
-- **Type:** Integer
-- **Scale:** 1–5
-- **Direction:** Higher is better
+```text
+category score = sum of weighted indicator scores
+```
 
-#### Scoring criteria
+The result is a score from 0 to 100.
 
-- **1:** English is rarely sufficient for study or daily life
-- **2:** Some English support, but the local language is frequently necessary
-- **3:** Courses are available in English, but daily life may require the local language
-- **4:** English is widely usable in both university and daily life
-- **5:** English is sufficient for almost all academic and daily activities
+## Calculated fields
 
----
+Some values used by the application are not stored directly in the original university dataset.
 
-## Cost variables
+### `estimated_monthly_cost_eur`
 
-### estimated_monthly_cost_eur
+Copied from:
 
-- **Description:** Estimated total monthly student expenditure, including housing, food, local transport and basic leisure
-- **Type:** Number
-- **Unit:** EUR per month
-- **Direction:** Lower is better
-- **Source:** University estimates and reputable cost-of-living sources
-- **Limitation:** Actual spending depends on accommodation and lifestyle
+```text
+monthly_cost_typical_eur
+```
 
-### housing_cost_eur
+It is used by the application's budget filter.
 
-- **Description:** Estimated average monthly housing cost for an exchange student
-- **Type:** Number
-- **Unit:** EUR per month
-- **Direction:** Lower is better
-- **Source:** Official university housing information or student-budget estimates
+### `academic_score`
 
-### flight_cost_from_milan_eur
+Calculated from the weighted academic indicators in `score_components.csv`.
 
-- **Description:** Approximate return travel cost from Milan to the destination
-- **Type:** Number
-- **Unit:** EUR
-- **Direction:** Lower is better
-- **Method:** Representative economy return fare
-- **Limitation:** Prices vary significantly by season and booking date
+The result is converted into the scale expected by the existing ranking pipeline.
 
----
+### `career_score`
 
-## Evaluation scores
+Calculated from the weighted career indicators in `score_components.csv`.
 
-### academic_score
+The result is converted into the scale expected by the existing ranking pipeline.
 
-- **Description:** Overall assessment of academic opportunities for an international management student
-- **Type:** Integer
-- **Scale:** 1–5
-- **Direction:** Higher is better
+### `housing_convenience_score`
 
-#### Scoring criteria
+Calculated from:
 
-- **1:** Very limited relevant course availability
-- **2:** Limited selection of relevant courses
-- **3:** Adequate range of relevant management courses
-- **4:** Strong course selection across several management areas
-- **5:** Extensive and highly relevant course offering
+- typical housing cost
+- difference between the low and high housing estimates
 
-### career_score
+The calculation gives:
 
-- **Description:** Assessment of the destination’s career and professional-development opportunities
-- **Type:** Integer
-- **Scale:** 1–5
-- **Direction:** Higher is better
+- 80% weight to housing affordability
+- 20% weight to cost predictability
 
-#### Factors considered
+### `housing_difficulty_score`
 
-- Local job market
-- Presence of multinational companies
-- Strength of relevant industries
-- Networking opportunities
-- Employer access
+Derived from the housing-convenience score because the ranking system currently expects a difficulty measure.
 
-#### Scoring criteria
+A lower value represents easier housing conditions.
 
-- **1:** Very limited career ecosystem
-- **2:** Some opportunities, but limited international accessibility
-- **3:** Moderate professional opportunities
-- **4:** Strong market with good international opportunities
-- **5:** Major international business hub with extensive opportunities
+A higher value represents more difficult housing conditions.
 
-### lifestyle_score
+## Data limitations
 
-- **Description:** Overall assessment of student lifestyle, culture, leisure and social environment
-- **Type:** Integer
-- **Scale:** 1–5
-- **Direction:** Higher is better
+The datasets contain estimates and constructed indicators.
 
-#### Scoring criteria
+Important limitations include:
 
-- **1:** Limited student and leisure environment
-- **2:** Some activities, but relatively limited
-- **3:** Balanced lifestyle and social opportunities
-- **4:** Strong cultural and social environment
-- **5:** Exceptional student lifestyle and variety of activities
+- university information changes over time
+- course access may change by semester
+- living costs depend on personal choices and exchange rates
+- published information is not always directly comparable
+- some contextual scores are simplified project assessments
 
-### international_environment_score
-
-- **Description:** Assessment of the school and city’s international student environment
-- **Type:** Integer
-- **Scale:** 1–5
-- **Direction:** Higher is better
-
-#### Scoring criteria
-
-- **1:** Predominantly local environment
-- **2:** Limited international presence
-- **3:** Moderately international
-- **4:** Highly international university or city
-- **5:** Exceptionally international academic and social environment
-
-### housing_difficulty_score
-
-- **Description:** Assessment of how difficult it is for an exchange student to secure suitable accommodation
-- **Type:** Integer
-- **Scale:** 1–5
-- **Direction:** Lower is better
-
-#### Scoring criteria
-
-- **1:** Housing is readily available and supported by the university
-- **2:** Generally manageable with some advance planning
-- **3:** Moderate competition or limited university accommodation
-- **4:** Difficult and expensive housing market
-- **5:** Severe housing shortage or extremely difficult search process
-
----
-
-## Administrative variable
-
-### visa_required_for_eu
-
-- **Description:** Whether an EU citizen normally requires a student visa or equivalent study authorisation
-- **Type:** Boolean
-- **Possible values:** TRUE, FALSE
-- **Direction:** FALSE is more convenient
-- **Limitation:** Immigration requirements may depend on nationality, study duration and current regulations
+The data should therefore support comparison rather than replace official university or government information.
