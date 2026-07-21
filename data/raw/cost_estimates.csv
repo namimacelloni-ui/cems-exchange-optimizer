@@ -1,1 +1,2 @@
 school_name,city,housing_low_eur,housing_typical_eur,housing_high_eur,non_housing_monthly_eur,monthly_cost_low_eur,monthly_cost_typical_eur,monthly_cost_high_eur,cost_reference_year,source_type,confidence_level,notes
+Copenhagen Business School,Copenhagen,670,850,1100,450,1120,1300,1550,2026,Official and government,Medium,"Housing range based on CBS accommodation guidance and current residence/private-room variation. Non-housing estimate assumes groceries, local transport, phone and modest social spending. Deposits, flights, tuition and semester travel are excluded."
