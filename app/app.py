@@ -665,7 +665,7 @@ else:
 
         st.dataframe(
             display_data,
-            use_container_width=True,
+            width="stretch",
             hide_index=True,
             column_config={
                 "Monthly cost (€)": st.column_config.NumberColumn(
