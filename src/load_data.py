@@ -2,6 +2,11 @@ from pathlib import Path
 
 import pandas as pd
 
+from src.component_scores import (
+    calculate_category_scores,
+    load_score_components,
+)
+
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 
@@ -16,11 +21,13 @@ COST_ESTIMATES_PATH = (
 
 def load_university_data() -> pd.DataFrame:
     """
-    Load the university dataset and merge the improved cost estimates.
+    Load and merge university, cost and component-score data.
 
-    The app continues to use `estimated_monthly_cost_eur`, but this
-    value is updated using `monthly_cost_typical_eur` from the new
-    structured cost dataset.
+    The structured monthly cost replaces the original prototype cost.
+
+    The calculated academic component score is converted from 0–100
+    to the equivalent 1–5 scale so that the existing normalization
+    and ranking functions remain compatible.
     """
 
     if not UNIVERSITIES_PATH.exists():
@@ -53,12 +60,14 @@ def load_university_data() -> pd.DataFrame:
         "confidence_level",
     }
 
-    missing_columns = required_cost_columns.difference(costs.columns)
+    missing_cost_columns = required_cost_columns.difference(
+        costs.columns
+    )
 
-    if missing_columns:
+    if missing_cost_columns:
         raise ValueError(
             "The cost dataset is missing required columns: "
-            f"{sorted(missing_columns)}"
+            f"{sorted(missing_cost_columns)}"
         )
 
     if costs["school_name"].duplicated().any():
@@ -95,6 +104,47 @@ def load_university_data() -> pd.DataFrame:
         data["monthly_cost_typical_eur"]
     )
 
+    score_components = load_score_components()
+
+    category_scores = calculate_category_scores(
+        score_components
+    )
+
+    academic_scores = category_scores[
+        category_scores["category"] == "academic"
+    ][
+        [
+            "school_name",
+            "category_score",
+        ]
+    ].rename(
+        columns={
+            "category_score": "academic_score_component",
+        }
+    )
+
+    data = data.merge(
+        academic_scores,
+        on="school_name",
+        how="left",
+        validate="one_to_one",
+    )
+
+    missing_academic_scores = data.loc[
+        data["academic_score_component"].isna(),
+        "school_name",
+    ].tolist()
+
+    if missing_academic_scores:
+        raise ValueError(
+            "Missing component-based academic scores for: "
+            f"{missing_academic_scores}"
+        )
+
+    data["academic_score"] = (
+        1 + data["academic_score_component"] / 25
+    )
+
     return data
 
 
@@ -104,11 +154,14 @@ if __name__ == "__main__":
     print("Datasets loaded and merged successfully.")
     print(f"Number of universities: {len(university_data)}")
 
-    print("\nUpdated monthly costs:")
+    print("\nUpdated academic and monthly cost data:")
+
     print(
         university_data[
             [
                 "school_name",
+                "academic_score_component",
+                "academic_score",
                 "monthly_cost_low_eur",
                 "monthly_cost_typical_eur",
                 "monthly_cost_high_eur",
