@@ -19,19 +19,10 @@ COST_ESTIMATES_PATH = (
 )
 
 
-CATEGORY_COLUMN_MAP = {
-    "academic": "academic_score",
-    "career": "career_score",
-    "lifestyle": "lifestyle_score",
-    "international": "international_score",
-    "english_friendliness": "english_friendliness_score",
-}
-
-
 def validate_cost_data(costs: pd.DataFrame) -> None:
-    """Validate the structured monthly-cost dataset."""
+    """Check that the cost dataset is complete and usable."""
 
-    required_cost_columns = {
+    required_columns = {
         "school_name",
         "housing_low_eur",
         "housing_typical_eur",
@@ -39,12 +30,9 @@ def validate_cost_data(costs: pd.DataFrame) -> None:
         "monthly_cost_low_eur",
         "monthly_cost_typical_eur",
         "monthly_cost_high_eur",
-        "confidence_level",
     }
 
-    missing_columns = required_cost_columns.difference(
-        costs.columns
-    )
+    missing_columns = required_columns.difference(costs.columns)
 
     if missing_columns:
         raise ValueError(
@@ -53,159 +41,140 @@ def validate_cost_data(costs: pd.DataFrame) -> None:
         )
 
     if costs.empty:
-        raise ValueError("The cost estimate dataset is empty.")
+        raise ValueError("The cost dataset is empty.")
 
     if costs["school_name"].duplicated().any():
-        duplicated_schools = costs.loc[
-            costs["school_name"].duplicated(),
-            "school_name",
-        ].tolist()
-
         raise ValueError(
-            "Duplicate schools found in the cost dataset: "
-            f"{duplicated_schools}"
+            "The cost dataset contains duplicate schools."
         )
 
 
 def add_housing_score(data: pd.DataFrame) -> pd.DataFrame:
     """
-    Calculate a housing-practicality score from structured cost data.
+    Calculate housing convenience from housing cost data.
 
     The score combines:
     - affordability: 80%
-    - cost predictability: 20%
+    - predictability of the estimate: 20%
 
-    Lower typical housing cost receives a higher score.
-    A smaller gap between low and high estimates receives a higher score.
+    The final value is stored as housing_difficulty_score because
+    that is the column currently expected by the ranking system.
+
+    A value of 1 means housing is relatively easy.
+    A value of 5 means housing is relatively difficult.
     """
 
-    minimum_typical_cost = data["housing_typical_eur"].min()
-    maximum_typical_cost = data["housing_typical_eur"].max()
+    data = data.copy()
 
-    typical_cost_range = (
-        maximum_typical_cost - minimum_typical_cost
-    )
+    minimum_cost = data["housing_typical_eur"].min()
+    maximum_cost = data["housing_typical_eur"].max()
 
-    if typical_cost_range == 0:
-        data["housing_affordability_component"] = 100.0
+    cost_range = maximum_cost - minimum_cost
+
+    if cost_range == 0:
+        affordability_score = pd.Series(
+            100.0,
+            index=data.index,
+        )
     else:
-        data["housing_affordability_component"] = (
+        affordability_score = (
             100
             * (
-                maximum_typical_cost
+                maximum_cost
                 - data["housing_typical_eur"]
             )
-            / typical_cost_range
+            / cost_range
         )
 
-    data["housing_cost_spread_eur"] = (
+    housing_spread = (
         data["housing_high_eur"]
         - data["housing_low_eur"]
     )
 
-    minimum_spread = data["housing_cost_spread_eur"].min()
-    maximum_spread = data["housing_cost_spread_eur"].max()
+    minimum_spread = housing_spread.min()
+    maximum_spread = housing_spread.max()
 
     spread_range = maximum_spread - minimum_spread
 
     if spread_range == 0:
-        data["housing_predictability_component"] = 100.0
+        predictability_score = pd.Series(
+            100.0,
+            index=data.index,
+        )
     else:
-        data["housing_predictability_component"] = (
+        predictability_score = (
             100
             * (
                 maximum_spread
-                - data["housing_cost_spread_eur"]
+                - housing_spread
             )
             / spread_range
         )
 
-    data["housing_score_component"] = (
-        0.80 * data["housing_affordability_component"]
-        + 0.20 * data["housing_predictability_component"]
+    housing_convenience_score = (
+        0.80 * affordability_score
+        + 0.20 * predictability_score
     )
 
-    data["housing_score"] = (
-        1 + data["housing_score_component"] / 25
+    data["housing_convenience_score"] = (
+        housing_convenience_score
+    )
+
+    data["housing_difficulty_score"] = (
+        5 - housing_convenience_score / 25
     )
 
     return data
 
 
-def merge_component_scores(
+def add_component_score(
     data: pd.DataFrame,
     category_scores: pd.DataFrame,
+    category: str,
+    target_column: str,
 ) -> pd.DataFrame:
-    """
-    Merge every available component-based category score.
+    """Merge one component-based category into the main dataset."""
 
-    Component scores use a 0–100 scale. They are converted to the
-    existing 1–5 scale so the current ranking system remains compatible.
-    """
+    selected_scores = category_scores.loc[
+        category_scores["category"] == category,
+        ["school_name", "category_score"],
+    ].rename(
+        columns={
+            "category_score": target_column,
+        }
+    )
 
-    for category, score_column in CATEGORY_COLUMN_MAP.items():
-        category_data = category_scores[
-            category_scores["category"] == category
-        ][
-            [
-                "school_name",
-                "category_score",
-            ]
-        ].copy()
-
-        if category_data.empty:
-            continue
-
-        component_column = f"{score_column}_component"
-
-        category_data = category_data.rename(
-            columns={
-                "category_score": component_column,
-            }
+    if selected_scores.empty:
+        raise ValueError(
+            f"No component scores found for category: {category}"
         )
 
-        data = data.merge(
-            category_data,
-            on="school_name",
-            how="left",
-            validate="one_to_one",
+    data = data.merge(
+        selected_scores,
+        on="school_name",
+        how="left",
+        validate="one_to_one",
+    )
+
+    missing_schools = data.loc[
+        data[target_column].isna(),
+        "school_name",
+    ].tolist()
+
+    if missing_schools:
+        raise ValueError(
+            f"Missing {category} scores for: {missing_schools}"
         )
 
-        missing_scores = data.loc[
-            data[component_column].isna(),
-            "school_name",
-        ].tolist()
-
-        if missing_scores:
-            raise ValueError(
-                f"Missing component-based {category} scores for: "
-                f"{missing_scores}"
-            )
-
-        data[score_column] = (
-            1 + data[component_column] / 25
-        )
+    data[target_column] = (
+        1 + data[target_column] / 25
+    )
 
     return data
 
 
 def load_university_data() -> pd.DataFrame:
-    """
-    Load university, cost and component-score data.
-
-    Housing scores are calculated directly from structured housing costs.
-    Other component categories are loaded from score_components.csv.
-    """
-
-    if not UNIVERSITIES_PATH.exists():
-        raise FileNotFoundError(
-            f"University dataset not found at: {UNIVERSITIES_PATH}"
-        )
-
-    if not COST_ESTIMATES_PATH.exists():
-        raise FileNotFoundError(
-            f"Cost dataset not found at: {COST_ESTIMATES_PATH}"
-        )
+    """Load the datasets used by the optimizer."""
 
     universities = pd.read_csv(UNIVERSITIES_PATH)
     costs = pd.read_csv(COST_ESTIMATES_PATH)
@@ -230,8 +199,7 @@ def load_university_data() -> pd.DataFrame:
 
     if missing_costs:
         raise ValueError(
-            "Missing structured cost estimates for: "
-            f"{missing_costs}"
+            f"Missing cost estimates for: {missing_costs}"
         )
 
     data["estimated_monthly_cost_eur"] = (
@@ -240,15 +208,21 @@ def load_university_data() -> pd.DataFrame:
 
     data = add_housing_score(data)
 
-    score_components = load_score_components()
+    components = load_score_components()
+    category_scores = calculate_category_scores(components)
 
-    category_scores = calculate_category_scores(
-        score_components
-    )
-
-    data = merge_component_scores(
+    data = add_component_score(
         data=data,
         category_scores=category_scores,
+        category="academic",
+        target_column="academic_score",
+    )
+
+    data = add_component_score(
+        data=data,
+        category_scores=category_scores,
+        category="career",
+        target_column="career_score",
     )
 
     return data
@@ -257,30 +231,18 @@ def load_university_data() -> pd.DataFrame:
 if __name__ == "__main__":
     university_data = load_university_data()
 
-    print("Datasets loaded and merged successfully.")
-    print(f"Number of universities: {len(university_data)}")
-
-    display_columns = [
+    columns_to_show = [
         "school_name",
+        "academic_score",
+        "career_score",
         "housing_typical_eur",
-        "housing_affordability_component",
-        "housing_predictability_component",
-        "housing_score_component",
-        "housing_score",
-        "academic_score_component",
-        "career_score_component",
+        "housing_convenience_score",
+        "housing_difficulty_score",
+        "estimated_monthly_cost_eur",
     ]
-
-    available_columns = [
-        column
-        for column in display_columns
-        if column in university_data.columns
-    ]
-
-    print("\nCurrent component scores and housing data:")
 
     print(
         university_data[
-            available_columns
+            columns_to_show
         ].to_string(index=False)
     )
