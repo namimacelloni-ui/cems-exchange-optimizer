@@ -642,10 +642,6 @@ else:
             ]
         ].copy()
 
-        display_data["final_score"] = (
-            display_data["final_score"].round(2)
-        )
-
         display_data = display_data.rename(
             columns={
                 "school_name": "School",
@@ -663,17 +659,67 @@ else:
             }
         )
 
+        display_data["Match score"] = (
+            display_data["Match score"].round(1)
+        )
+
+        display_data["Academic"] = (
+            display_data["Academic"].round(1)
+        )
+
+        display_data["Career"] = (
+            display_data["Career"].round(1)
+        )
+
+        display_data["Lifestyle"] = (
+            display_data["Lifestyle"].round(1)
+        )
+
+        display_data["International"] = (
+            display_data["International"].round(1)
+        )
+
+        display_data["English"] = (
+            display_data["English"].round(1)
+        )
+
+        display_data["Housing"] = (
+            6 - display_data["Housing difficulty"]
+        ).round(1)
+
+        display_data = display_data.drop(
+            columns=["Housing difficulty"]
+        )
+
         st.dataframe(
             display_data,
             width="stretch",
             hide_index=True,
             column_config={
                 "Monthly cost (€)": st.column_config.NumberColumn(
-                    format="€%d"
+                    format="€%d",
                 ),
                 "Match score": st.column_config.ProgressColumn(
                     min_value=0,
                     max_value=100,
+                    format="%.1f",
+                ),
+                "Academic": st.column_config.NumberColumn(
+                    format="%.1f",
+                ),
+                "Career": st.column_config.NumberColumn(
+                    format="%.1f",
+                ),
+                "Lifestyle": st.column_config.NumberColumn(
+                    format="%.1f",
+                ),
+                "International": st.column_config.NumberColumn(
+                    format="%.1f",
+                ),
+                "English": st.column_config.NumberColumn(
+                    format="%.1f",
+                ),
+                "Housing": st.column_config.NumberColumn(
                     format="%.1f",
                 ),
             },
@@ -687,12 +733,13 @@ else:
         )
 
         top_school = available_results.iloc[0]
+
         explanation = generate_recommendation_explanation(
-        university=top_school,
-        ranked_data=available_results,
-        weights=weights,
-        maximum_budget=maximum_budget,
-    )
+            university=top_school,
+            ranked_data=available_results,
+            weights=weights,
+            maximum_budget=maximum_budget,
+        )
 
         st.markdown(
             f"""
