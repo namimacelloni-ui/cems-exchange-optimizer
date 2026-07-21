@@ -1,16 +1,16 @@
-school_name,city,country,region,teaching_language,estimated_monthly_cost_eur,housing_cost_eur,flight_cost_from_milan_eur,academic_score,career_score,lifestyle_score,international_environment_score,housing_difficulty_score,english_friendliness_score,visa_required_for_eu,data_status
-ESADE,Barcelona,Spain,Southern Europe,English,1350,750,120,5,5,5,5,4,5,FALSE,partial
-Nova SBE,Lisbon,Portugal,Southern Europe,English,1200,650,150,5,4,5,5,4,5,FALSE,partial
-HEC Paris,Jouy-en-Josas,France,Western Europe,English,1500,850,120,5,5,4,5,2,4,FALSE,partial
-Rotterdam School of Management,Rotterdam,Netherlands,Western Europe,English,1450,850,150,5,5,4,5,5,5,FALSE,partial
-University of St. Gallen,St. Gallen,Switzerland,Western Europe,English,1750,900,160,5,5,3,5,3,5,FALSE,partial
-Copenhagen Business School,Copenhagen,Denmark,Northern Europe,English,1500,850,180,5,5,4,5,4,5,FALSE,partial
-Stockholm School of Economics,Stockholm,Sweden,Northern Europe,English,1550,850,180,5,5,4,5,4,5,FALSE,partial
-WU Vienna,Vienna,Austria,Central Europe,English,1200,650,130,5,4,5,5,3,5,FALSE,partial
-Prague University of Economics and Business,Prague,Czech Republic,Central Europe,English,950,550,120,4,4,5,4,3,4,FALSE,partial
-National University of Singapore,Singapore,Singapore,Asia,English,1750,900,650,5,5,5,5,4,5,TRUE,partial
-HKUST Business School,Hong Kong,Hong Kong,Asia,English,1650,850,650,5,5,5,5,4,5,TRUE,partial
-Keio University,Tokyo,Japan,Asia,English,1450,750,700,5,5,5,4,4,4,TRUE,partial
-Cornell SC Johnson College of Business,Ithaca,United States,North America,English,2200,1200,750,5,5,3,5,3,5,TRUE,partial
-FGV EAESP,Sao Paulo,Brazil,South America,English,1100,600,750,4,5,5,4,3,3,TRUE,partial
-University of Sydney Business School,Sydney,Australia,Oceania,English,2100,1200,900,5,5,5,5,5,5,TRUE,partial
+school_name,city,country,region,teaching_language,flight_cost_from_milan_eur,lifestyle_score,international_environment_score,english_friendliness_score,visa_required_for_eu,data_status
+ESADE,Barcelona,Spain,Southern Europe,English,120,5,5,5,FALSE,partial
+Nova SBE,Lisbon,Portugal,Southern Europe,English,150,5,5,5,FALSE,partial
+HEC Paris,Jouy-en-Josas,France,Western Europe,English,120,4,5,4,FALSE,partial
+Rotterdam School of Management,Rotterdam,Netherlands,Western Europe,English,150,4,5,5,FALSE,partial
+University of St. Gallen,St. Gallen,Switzerland,Western Europe,English,160,3,5,5,FALSE,partial
+Copenhagen Business School,Copenhagen,Denmark,Northern Europe,English,180,4,5,5,FALSE,partial
+Stockholm School of Economics,Stockholm,Sweden,Northern Europe,English,180,4,5,5,FALSE,partial
+WU Vienna,Vienna,Austria,Central Europe,English,130,5,5,5,FALSE,partial
+Prague University of Economics and Business,Prague,Czech Republic,Central Europe,English,120,5,4,4,FALSE,partial
+National University of Singapore,Singapore,Singapore,Asia,English,650,5,5,5,TRUE,partial
+HKUST Business School,Hong Kong,Hong Kong,Asia,English,650,5,5,5,TRUE,partial
+Keio University,Tokyo,Japan,Asia,English,700,5,4,4,TRUE,partial
+Cornell SC Johnson College of Business,Ithaca,United States,North America,English,750,3,5,5,TRUE,partial
+FGV EAESP,Sao Paulo,Brazil,South America,English,750,5,4,3,TRUE,partial
+University of Sydney Business School,Sydney,Australia,Oceania,English,900,5,5,5,TRUE,partial
