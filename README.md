@@ -1,6 +1,6 @@
 # CEMS Exchange Destination Optimizer
 
-A decision-support tool that helps CEMS students compare exchange destinations according to their academic, career, financial, language and lifestyle preferences.
+A decision-support tool that helps CEMS students compare exchange destinations based on their academic, career, financial, language, housing, and lifestyle preferences.
 
 ## Live application
 
@@ -8,118 +8,130 @@ A decision-support tool that helps CEMS students compare exchange destinations a
 
 ## Overview
 
-Choosing an exchange destination requires students to compare fragmented information about universities, living costs, language, housing, professional opportunities and student life.
+Choosing an exchange destination requires students to compare information from many different sources, including university websites, cost estimates, exchange requirements, and local living conditions.
 
 The CEMS Exchange Destination Optimizer brings these factors together in one interactive application and produces a personalised ranking based on the user's constraints and priorities.
 
-## Key features
+## Main features
 
-- Personalised ranking of 15 CEMS exchange destinations
+- Ranking of 15 CEMS exchange destinations
 - Region and teaching-language filters
 - Maximum monthly budget filter
 - Visa-free destination filter for EU citizens
-- Adjustable priority weights
-- Transparent compatibility score
-- Estimated monthly student costs
-- Explanation of the main strengths and drawbacks of the top recommendation
+- Adjustable importance weights
+- Estimated monthly living-cost ranges
+- Transparent recommendation explanations
 - Automated tests for the scoring and ranking logic
 
+## Criteria
 
-## How it works
+The ranking uses six categories:
 
-The application follows four main steps:
+- Academic opportunities
+- Career opportunities
+- Lifestyle
+- International environment
+- English friendliness
+- Housing convenience
 
-1. It filters destinations according to practical constraints such as region, language, budget and visa requirements.
-2. It converts raw 1–5 scores into a standardised 0–100 scale.
-3. It applies the user's selected weights to the following categories:
-   - Academic opportunities
-   - Career opportunities
-   - Lifestyle
-   - International environment
-   - English friendliness
-   - Housing convenience
-4. It ranks the eligible universities according to their final weighted score.
+Users decide how important each category is, provided that the total weight equals 100%.
 
-## Default weighting
+## Data structure
 
-The initial model uses the following default weights:
+The project uses three main datasets.
 
-| Category | Weight |
-|---|---:|
-| Academic opportunities | 25% |
-| Career opportunities | 20% |
-| Lifestyle | 15% |
-| International environment | 15% |
-| English friendliness | 15% |
-| Housing convenience | 10% |
+### `cems_universities.csv`
 
-Users can change these weights, provided that the total remains equal to 100%.
+Contains stable destination information and simplified contextual indicators:
 
-## Dataset
+- school and location
+- region
+- teaching language
+- approximate return travel cost from Milan
+- lifestyle score
+- international-environment score
+- English-friendliness score
+- visa requirement for EU citizens
 
-The prototype currently includes 15 CEMS destinations across Europe, Asia, North America, South America and Oceania.
+### `cost_estimates.csv`
 
-The dataset contains:
+Contains structured living-cost estimates:
 
-- School, city, country and region
-- Teaching language
-- Estimated monthly student cost
-- Estimated housing cost
-- Approximate return travel cost from Milan
-- Academic score
-- Career score
-- Lifestyle score
-- International environment score
-- Housing difficulty score
-- English friendliness score
-- Visa requirement for EU citizens
+- low, typical, and high monthly cost
+- housing-cost estimates
+- non-housing expenses
+- reference year
+- confidence level
+- source information
 
-## Methodology
+The typical monthly estimate is used by the budget filter.
 
-Positive indicators such as academic quality and career opportunities are scored from 1 to 5 and converted to a 0–100 scale:
+### `score_components.csv`
 
-```text
-1 → 0
-2 → 25
-3 → 50
-4 → 75
-5 → 100
-```
+Contains the component-level academic and career indicators.
 
-Housing difficulty is treated as a negative variable, meaning that a lower raw score produces a higher convenience score.
+Academic indicators include:
 
-The final score is calculated as:
+- course breadth
+- subject-area coverage
+- graduate-course access
+- course accessibility
+- academic flexibility
 
-```text
-Final score =
-Academic score × academic weight
-+ Career score × career weight
-+ Lifestyle score × lifestyle weight
-+ International environment score × international weight
-+ English friendliness score × English weight
-+ Housing convenience score × housing weight
-```
+Career indicators include:
 
-More detailed documentation is available in:
+- local business ecosystem
+- international employer presence
+- relevant industry strength
+- career services
+- English accessibility in the local labour market
 
-- `reports/scoring_methodology.md`
-- `reports/cost_methodology.md`
+Each component is scored from 0 to 100 and multiplied by its assigned weight.
+
+## Housing calculation
+
+Housing convenience is calculated from the structured housing-cost data.
+
+It combines:
+
+- housing affordability: 80%
+- predictability of the cost estimate: 20%
+
+Lower typical housing costs receive higher affordability scores.
+
+A smaller difference between the low and high housing estimates receives a higher predictability score.
+
+## Ranking method
+
+The application:
+
+1. Filters destinations according to region, language, budget, and visa preferences.
+2. Prepares the six category scores.
+3. Applies the weights selected by the user.
+4. Calculates a final weighted compatibility score.
+5. Ranks the eligible destinations.
+
+The ranking is relative to the destinations currently included in the dataset.
+
+More detail is available in:
+
+- `reports/methodology.md`
 - `data/data_dictionary.md`
 
-## Data limitations
+## Limitations
 
-This is a prototype and the data should not be interpreted as an official university ranking.
+This project is a decision-support tool, not an official university ranking.
 
 Important limitations include:
 
-- Several scores are constructed project indicators rather than official university ratings.
-- Cost figures are approximate and may change over time.
-- Lifestyle and career scores include a degree of subjective judgement.
-- Course availability may vary by semester.
-- Visa requirements depend on nationality, study duration and current regulations.
-- The dataset should be validated further before being used for high-stakes decisions.
+- several indicators are constructed project scores
+- university information is not always published in a comparable format
+- course availability may change by semester
+- costs vary according to accommodation, exchange rates, and personal spending
+- lifestyle and international-environment scores remain simplified estimates
+- visa and work rules may change
 
-The application is intended to support comparison, not replace official university information or personal judgement.
+Users should verify important information through official university and government sources before making a final decision.
 
 ## Project structure
 
@@ -128,99 +140,77 @@ cems-exchange-optimizer/
 │
 ├── app/
 │   └── app.py
-├── assets/
+│
 ├── data/
 │   ├── raw/
 │   │   ├── cems_universities.csv
-│   │   └── data_sources.csv
-│   ├── processed/
+│   │   ├── cost_estimates.csv
+│   │   └── score_components.csv
 │   └── data_dictionary.md
-├── notebooks/
+│
 ├── reports/
-│   ├── cost_methodology.md
-│   ├── data_collection_checklist.md
-│   └── scoring_methodology.md
+│   └── methodology.md
+│
 ├── src/
+│   ├── component_scores.py
 │   ├── explanations.py
 │   ├── load_data.py
 │   ├── ranking.py
-│   ├── run_ranking.py
 │   └── scoring.py
+│
 ├── tests/
+│   ├── test_component_scores.py
 │   ├── test_explanations.py
 │   ├── test_ranking.py
 │   └── test_scoring.py
+│
 ├── README.md
 └── requirements.txt
 ```
 
-## Technologies used
+## Technologies
 
 - Python
 - Pandas
 - Streamlit
 - Pytest
-- Git
 - GitHub
 
-## Run the application locally
+## Run locally
 
-### 1. Clone the repository
+Clone the repository:
 
 ```bash
 git clone https://github.com/namimacelloni-ui/cems-exchange-optimizer.git
 cd cems-exchange-optimizer
 ```
 
-### 2. Install the dependencies
-
-```bash
-python -m pip install -r requirements.txt
-```
-
-On Windows, you may need to use:
+Install the dependencies:
 
 ```bash
 py -m pip install -r requirements.txt
 ```
 
-### 3. Run the tests
-
-```bash
-python -m pytest
-```
-
-or:
+Run the tests:
 
 ```bash
 py -m pytest
 ```
 
-### 4. Launch the application
-
-```bash
-python -m streamlit run app/app.py
-```
-
-or:
+Launch the application:
 
 ```bash
 py -m streamlit run app/app.py
 ```
 
-## Future improvements
+## Possible future improvements
 
-Possible next versions could include:
-
-- Fully validated cost and housing data
-- All CEMS member schools
-- Course-level academic matching
-- Destination comparison charts
-- Student-review data
-- More detailed explanations of recommendations
-- Sensitivity analysis
-- Downloadable recommendation reports
-- Automatic data updates
+- validate the remaining contextual indicators
+- expand the dataset to additional CEMS schools
+- add course-level matching
+- add destination-comparison charts
+- introduce sensitivity analysis
+- automate periodic data updates
 
 ## Disclaimer
 
